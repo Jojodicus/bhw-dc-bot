@@ -2,6 +2,7 @@ import os
 import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -15,16 +16,23 @@ bot = discord.Bot(intents=intents)
 async def on_ready():
     print(f'{bot.user} is up and running on {len(bot.guilds)} servers!')
 
-@bot.event
-async def on_error(event, *args, **kwargs):
-    print(f'{event} - {args} - {kwargs}')
+# @bot.event
+# async def on_error(event, *args, **kwargs):
+#     print(f'{event} - {args} - {kwargs}')
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     
-    # TODO: geizhals link fix
+    # fix broken links
+    links = re.findall(r'https?://geizhals..?.?/https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3DWL-[0-9]+', message.content)
+    if links:
+        links = '\n'.join([re.sub(r'https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3D', '?cat=WL-', link) for link in links])
+        await message.reply(f'Die Nachricht enthält kaputte Geizhals-Links, hier einmal korrigiert:\n{links}')
+        return
+
+    # TODO: private lists
 
 @bot.slash_command(name='1tbssd', description='Bens Empfehlung für 1TB SSDs')
 async def ssd1tb(ctx):
