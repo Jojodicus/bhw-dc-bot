@@ -46,7 +46,7 @@ async def on_message(message):
         # private list
         page = requests.get(link)
         if 'Wunschliste ist nicht vorhanden' in page.text:
-            await message.reply(f'Diese Wunschliste (<{link}>) nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+            await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
 
 
