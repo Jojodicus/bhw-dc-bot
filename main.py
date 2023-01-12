@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import re
+import requests
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -25,12 +26,29 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
+    # TODO: more efficient link searching
+
     # fix broken links
     links = re.findall(r'https?://geizhals..?.?/https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3DWL-[0-9]+', message.content)
     if links:
         links = '\n'.join([re.sub(r'https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3D', '?cat=', link) for link in links])
         await message.reply(f'Die Nachricht enthält kaputte Geizhals-Links, hier einmal korrigiert:\n{links}')
         return
+
+    # local/private lists
+    links = re.findall(r'https?://geizhals..?.?/\?cat=WL-?[0-9]*', message.content)
+    for link in links:
+        # local list
+        if sum([c.isdigit() for c in link]) <= 1:
+            await message.reply(f'Diese Wunschliste (<{link}>) ist lokal und nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+            return
+        
+        # private list
+        page = requests.get(link)
+        if 'Wunschliste ist nicht vorhanden' in page.text:
+            await message.reply(f'Diese Wunschliste (<{link}>) nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+            return
+
 
     # TODO: private lists
 
@@ -74,9 +92,9 @@ async def netzteil(ctx):
 async def ram(ctx):
     await ctx.respond(f'Hier findet Ihr den aktuell besten RAM: https://gh.de/g/qC\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
-@bot.slash_command(name='rgblüfter', description='Bens Empfehlung für Lüfter mit RGB')
-async def rgblüfter(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+# @bot.slash_command(name='rgblüfter', description='Bens Empfehlung für Lüfter mit RGB')
+# async def rgblüfter(ctx):
+#     await ctx.respond(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 # TODO: cpu/gpu ranking links thw
 
