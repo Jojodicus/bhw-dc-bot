@@ -4,6 +4,7 @@ from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import re
 import requests
+import shlex
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -11,6 +12,7 @@ TOKEN = os.getenv('BHW_TOKEN')
 intents = discord.Intents.default()
 intents.message_content = True
 
+prefix = '%'
 bot = discord.Bot(intents=intents)
 
 @bot.event
@@ -25,7 +27,12 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-    
+
+    # makeshift prefix commands
+    if message.content.startswith(prefix):
+        await command_handler(message)
+        return
+
     # TODO: more efficient link searching
 
     # fix broken links
@@ -48,9 +55,6 @@ async def on_message(message):
         if 'Wunschliste ist nicht vorhanden' in page.text:
             await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
-
-
-    # TODO: private lists
 
 @bot.slash_command(name='1tbssd', description='Bens Empfehlung für 1TB SSDs')
 async def ssd1tb(ctx):
@@ -92,9 +96,9 @@ async def netzteil(ctx):
 async def ram(ctx):
     await ctx.respond(f'Hier findet Ihr den aktuell besten RAM: https://gh.de/g/qC\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
-# @bot.slash_command(name='rgblüfter', description='Bens Empfehlung für Lüfter mit RGB')
-# async def rgblüfter(ctx):
-#     await ctx.respond(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+@bot.slash_command(name='rgblüfter', description='Bens Empfehlung für Lüfter mit RGB')
+async def rgblüfter(ctx):
+    await ctx.respond(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='gpu-ranking', description='Leistungsranking von Grafikkarten anhand der FPS')
 async def gpu_ranking(ctx, resolution: str):
@@ -111,6 +115,52 @@ async def gpu_ranking(ctx, resolution: str):
             return
 
     await ctx.respond('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html>', file=discord.File(f))
+
+async def command_handler(message):
+    cmd = shlex.split(message.content[len(prefix):])
+
+    match cmd:
+        case ['ping']:
+            await ping(message)
+        case ['meta' | 'metafrage']:
+            await metafrage(message)
+        case ['psu']:
+            await psu(message)
+        case _:
+            await message.reply('Unbekannter Befehl')
+
+async def ping(message):
+    await message.reply(f'pong - {int(bot.latency * 1000)}ms')
+
+async def metafrage(message):
+    embed = discord.Embed(title='Metafragen', color=discord.Color.brand_red(), url='https://wiki.tilde.fun/de/guide/questions')
+    embed.add_field(name='', value='''Metafragen sind Fragen, welche oft vor einer richtigen Frage gestellt werden.
+
+Klassische Beispiele für Metafragen sind:
+- Kann mir jemand bei Monitoren helfen?
+- Kennt sich hier jemand mit Tastaturen aus?
+
+Solche Fragen verhindern eine schnelle Antwort auf die eigentliche Frage. Oft denkt jemand nicht, im Fachgebiet "gut genug" zu sein, kennt aber die Antwort und könnte trotzdem nicht antworten. Auch wenn sich jemand meldet, muss er erst auf die Antwort des Fragestellers warten, bis er antworten kann.
+
+Stelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies erspart dir Zeit und erhöht die Chance auf eine Antwort.''')
+
+    if message.reference:
+        await message.channel.send(embed=embed, reference=message.reference)
+    else:
+        await message.reply(embed=embed)
+    return
+
+async def psu(message):
+    embed = discord.Embed(title='Tier A Netzteile (nach cultists.network)', color=discord.Color.blue(), url='https://cultists.network/140/psu-tier-list/')
+    embed.add_field(name='1000+W', value='https://geizhals.de/?cat=WL-2652571')
+    embed.add_field(name='800+W', value='https://geizhals.de/?cat=WL-2652570')
+    embed.add_field(name='700+W', value='https://geizhals.de/?cat=WL-2652569')
+    embed.add_field(name='600+W', value='https://geizhals.de/?cat=WL-2652568')
+    embed.add_field(name='500+W', value='https://geizhals.de/?cat=WL-2652566')
+    embed.add_field(name='Seasonic', value='https://geizhals.de/?cat=WL-2678896')
+    await message.reply(embed=embed)
+
+
 
 # TODO: cpu ranking links thw
 
