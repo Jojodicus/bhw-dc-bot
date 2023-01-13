@@ -56,51 +56,79 @@ async def on_message(message):
             await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
 
+def has_role_or_higher(user, rolename, guild):
+    rns = list(map(lambda x: x.name, guild.roles))
+
+    if rolename not in rns:
+            return True
+
+    highest = user.roles[-1].name
+    return rns.index(highest) > rns.index(rolename)
+
+def is_atleast(rolename):
+    async def predicate(ctx):
+        return has_role_or_higher(ctx.author, rolename, ctx.guild)
+    return commands.check(predicate)
+
+minRole = 'Silber'
+
 @bot.slash_command(name='1tbssd', description='Bens Empfehlung für 1TB SSDs')
+@is_atleast(minRole)
 async def ssd1tb(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten 1TB-SSDs: https://gh.de/g/q0\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='2tbssd', description='Bens Empfehlung für 2TB SSDs')
+@is_atleast(minRole)
 async def ssd2tb(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten 2TB-SSDs: https://gh.de/g/qP\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='4tbssd', description='Bens Empfehlung für 4TB SSDs')
+@is_atleast(minRole)
 async def ssd4tb(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten 4TB-SSDs: https://gh.de/g/qW\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='aio', description='Bens Empfehlung für AIO-Wasserkühlungen')
+@is_atleast(minRole)
 async def aio(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten AiO-Wasserkühlungen: https://gh.de/g/Xg\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='case', description='Bens Empfehlung für Gehäuse')
+@is_atleast(minRole)
 async def case(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten Gehäuse für guten Airflow: https://gh.de/g/XY\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='cpukühler', description='Bens Empfehlung für CPU-Kühler')
+@is_atleast(minRole)
 async def cpukühler(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten CPU-Luftkühler: https://gh.de/g/Xn\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='gehäuse', description='Bens Empfehlung für Gehäuse')
+@is_atleast(minRole)
 async def gehäuse(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten Gehäuse für guten Airflow: https://gh.de/g/XY\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='lüfter', description='Bens Empfehlung für Lüfter ohne RGB')
+@is_atleast(minRole)
 async def lüfter(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten Gehäuselüfter ohne RGB: https://gh.de/g/q6\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='netzteil', description='Bens Empfehlung für Netzteile')
+@is_atleast(minRole)
 async def netzteil(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten Netzteile: https://gh.de/g/1H\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='ram', description='Bens Empfehlung für RAM')
+@is_atleast(minRole)
 async def ram(ctx):
     await ctx.respond(f'Hier findet Ihr den aktuell besten RAM: https://gh.de/g/qC\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='rgblüfter', description='Bens Empfehlung für Lüfter mit RGB')
+@is_atleast(minRole)
 async def rgblüfter(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 @bot.slash_command(name='gpu-ranking', description='Leistungsranking von Grafikkarten anhand der FPS')
+@is_atleast(minRole)
 async def gpu_ranking(ctx, resolution: str):
     # TODO: scrape from website
     match resolution:
@@ -116,6 +144,22 @@ async def gpu_ranking(ctx, resolution: str):
 
     await ctx.respond('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html>', file=discord.File(f))
 
+@ssd1tb.error
+@ssd2tb.error
+@ssd4tb.error
+@aio.error
+@case.error
+@cpukühler.error
+@gehäuse.error
+@lüfter.error
+@netzteil.error
+@ram.error
+@rgblüfter.error
+@gpu_ranking.error
+async def insufficient_role(ctx, error):
+    # TODO isinstance CheckError
+    await ctx.respond(f'Du brauchst mindestens die Rolle \'{minRole}\' für diesen Befehl.', ephemeral=True, delete_after=10)
+
 async def command_handler(message):
     cmd = shlex.split(message.content[len(prefix):])
 
@@ -126,13 +170,18 @@ async def command_handler(message):
             await metafrage(message)
         case ['psu']:
             await psu(message)
-        case _:
-            await message.reply('Unbekannter Befehl')
 
 async def ping(message):
-    await message.reply(f'pong - {int(bot.latency * 1000)}ms')
+    if message.author.guild_permissions.administrator:
+        await message.reply(f'pong - {int(bot.latency * 1000)}ms')
+
+minRole2 = 'Bronze'
 
 async def metafrage(message):
+    if not has_role_or_higher(message.author, minRole2, message.guild):
+        await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        return
+
     embed = discord.Embed(title='Metafragen', color=discord.Color.brand_red(), url='https://wiki.tilde.fun/de/guide/questions')
     embed.add_field(name='', value='''Metafragen sind Fragen, welche oft vor einer richtigen Frage gestellt werden.
 
@@ -151,6 +200,10 @@ Stelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies ersp
     return
 
 async def psu(message):
+    if not has_role_or_higher(message.author, minRole2, message.guild):
+        await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        return
+
     embed = discord.Embed(title='Tier A Netzteile (nach cultists.network)', color=discord.Color.blue(), url='https://cultists.network/140/psu-tier-list/')
     embed.add_field(name='1000+W', value='https://geizhals.de/?cat=WL-2652571')
     embed.add_field(name='800+W', value='https://geizhals.de/?cat=WL-2652570')
