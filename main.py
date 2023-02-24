@@ -52,7 +52,7 @@ async def on_message(message):
         
         # private list
         page = requests.get(link)
-        if 'Wunschliste ist nicht vorhanden' in page.text:
+        if 'STATUS Code: 403 - Forbidden' in page.text:
             await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
 
@@ -175,11 +175,12 @@ async def ping(message):
     if message.author.guild_permissions.administrator:
         await message.reply(f'pong - {int(bot.latency * 1000)}ms')
 
-minRole2 = 'Bronze'
+minRole2 = 'Silber'
 
 async def metafrage(message):
     if not has_role_or_higher(message.author, minRole2, message.guild):
-        await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
         return
 
     embed = discord.Embed(title='Metafragen', color=discord.Color.brand_red(), url='https://wiki.tilde.fun/de/guide/questions')
@@ -201,7 +202,8 @@ Stelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies ersp
 
 async def psu(message):
     if not has_role_or_higher(message.author, minRole2, message.guild):
-        await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
         return
 
     embed = discord.Embed(title='Tier A Netzteile (nach cultists.network)', color=discord.Color.blue(), url='https://cultists.network/140/psu-tier-list/')
