@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import os
 import discord
 from discord.ext import commands, tasks
@@ -8,6 +10,7 @@ import shlex
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
+API_COOKIE = os.getenv('GH_API_COOKIE')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -35,6 +38,24 @@ async def on_message(message):
 
     # TODO: more efficient link searching
 
+    # local/private lists
+    locals = re.findall(r'https?://geizhals..?.?/wishlists/local-[0-9]+', message.content)
+    if locals:
+        await message.reply(f'Diese Wunschliste (<{locals[0]}>) ist lokal und nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+        return
+    private = re.findall(r'https?://geizhals..?.?/wishlists/[0-9]+', message.content)
+    for link in private:
+        page = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', link)
+        page = requests.get(page, headers={'cookie': API_COOKIE})
+        if r'{"response":null}' in page.text:
+            await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+            return
+        if r'{"code":403,"error":"Authentication failed"}' in page.text:
+            jojo = await bot.fetch_user(226054688368361474) # Jojodicus#0001, bot dev
+            await jojo.send(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
+            # TODO: DM to bot sets new api cookie
+
+    """ LEGACY
     # fix broken links
     links = re.findall(r'https?://geizhals..?.?/https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3DWL-[0-9]+', message.content)
     if links:
@@ -55,6 +76,7 @@ async def on_message(message):
         if 'STATUS Code: 403 - Forbidden' in page.text:
             await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
+    """
 
 def has_role_or_higher(user, rolename, guild):
     rns = list(map(lambda x: x.name, guild.roles))
