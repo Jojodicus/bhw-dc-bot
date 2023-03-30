@@ -155,16 +155,16 @@ async def gpu_ranking(ctx, resolution: str):
     # TODO: scrape from website
     match resolution:
         case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k':
-            f = 'assets/gpu-1080.png.webp'
+            f = 'assets/gpu-1080.png'
         case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k':
-            f = 'assets/gpu-1440.png.webp'
+            f = 'assets/gpu-1440.png'
         case '2160p' | '2160' | 'uhd' | 'UHD' | '4k':
-            f = 'assets/gpu-2160.png.webp'
+            f = 'assets/gpu-2160.png'
         case _:
             await ctx.respond(f'Unbekannte Auflösung: {resolution}', ephemeral=True, delete_after=10)
             return
 
-    await ctx.respond('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html>', file=discord.File(f))
+    await ctx.respond('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html> (14.02.2023)', file=discord.File(f))
 
 @ssd1tb.error
 @ssd2tb.error
