@@ -2,11 +2,13 @@
 
 import os
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from dotenv import load_dotenv
 import re
 import requests
 import shlex
+from bs4 import BeautifulSoup
+import json
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -17,6 +19,10 @@ intents.message_content = True
 
 prefix = '%'
 bot = discord.Bot(intents=intents)
+
+async def send_msg_to_dev(msg):
+    jojo = await bot.fetch_user(226054688368361474) # Jojodicus#0001, bot dev
+    await jojo.send(msg)
 
 @bot.event
 async def on_ready():
@@ -51,8 +57,7 @@ async def on_message(message):
             await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
         if r'{"code":403,"error":"Authentication failed"}' in page.text:
-            jojo = await bot.fetch_user(226054688368361474) # Jojodicus#0001, bot dev
-            await jojo.send(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
+            await send_msg_to_dev(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
             # TODO: DM to bot sets new api cookie
 
     """ LEGACY
@@ -149,22 +154,46 @@ async def ram(ctx):
 async def rgblüfter(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
+def find_image(resolution: str) -> str:
+    data = requests.get('https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html')
+    soup = BeautifulSoup(data.text, 'html.parser')
+    for s in soup.find_all('script', type='text/javascript'):
+        if not 'GPU benchmarks hierarchy ray tracing generational performance chart' in s.text:
+            continue
+        for line in s.text.split('\n'):
+            if not 'var data = ' in line:
+                continue
+            line = line.replace('var data = ', '')
+            line = line.replace(';', '')
+
+            data = json.loads(line)
+            for row in data['galleryData']:
+                img = row['image']
+                if img['name'] == f'gpu-benchmarks-dxr-generational-performance-chart-{resolution}.png':
+                    return img['src']
+
 @bot.slash_command(name='gpu-ranking', description='Leistungsranking von Grafikkarten anhand der FPS')
 @is_atleast(minRole)
 async def gpu_ranking(ctx, resolution: str):
     # TODO: scrape from website
     match resolution:
         case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k':
-            f = 'assets/gpu-1080.png'
+            cdn = find_image('1080p-ult')
         case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k':
-            f = 'assets/gpu-1440.png'
+            cdn = find_image('1440p-ult')
         case '2160p' | '2160' | 'uhd' | 'UHD' | '4k':
-            f = 'assets/gpu-2160.png'
+            cdn = find_image('2160p-ult')
         case _:
             await ctx.respond(f'Unbekannte Auflösung: {resolution}', ephemeral=True, delete_after=10)
             return
+    
+    # save file if not already cached
+    filename = '.cache' + cdn[cdn.rfind('/'):]
+    if not os.path.exists(filename):
+        with open(filename, 'wb') as f:
+            f.write(requests.get(cdn).content)
 
-    await ctx.respond('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html> (14.02.2023)', file=discord.File(f))
+    await ctx.respond('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html>', file=discord.File(filename))
 
 @ssd1tb.error
 @ssd2tb.error
@@ -179,8 +208,10 @@ async def gpu_ranking(ctx, resolution: str):
 @rgblüfter.error
 @gpu_ranking.error
 async def insufficient_role(ctx, error):
-    # TODO isinstance CheckError
-    await ctx.respond(f'Du brauchst mindestens die Rolle \'{minRole}\' für diesen Befehl.', ephemeral=True, delete_after=10)
+    if isinstance(error, commands.errors.CheckFailure):
+        await ctx.respond(f'Du brauchst mindestens die Rolle \'{minRole}\' für diesen Befehl.', ephemeral=True, delete_after=10)
+    else:
+        await send_msg_to_dev(f'ctx: {ctx}\n\nerror:{error}')
 
 async def command_handler(message):
     cmd = shlex.split(message.content[len(prefix):])
