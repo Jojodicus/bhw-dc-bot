@@ -176,7 +176,6 @@ def find_image(resolution: str) -> str:
 @bot.slash_command(name='gpu-ranking', description='Leistungsranking von Grafikkarten anhand der FPS. Optionen: 1080p, 1440p, 2160p')
 @is_atleast(minRole)
 async def gpu_ranking(ctx, resolution: str):
-    # TODO: scrape from website
     match resolution:
         case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k':
             cdn = find_image('1080p-ult')
@@ -244,6 +243,8 @@ async def command_handler(message):
             await rams(message)
         case ['rgblüfter' | 'rgb-lüfter' | 'rgb-fan' | 'rgb-fans']:
             await rgb_fans(message)
+        case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark', resolution]:
+            await gpu_rank(message, resolution)
 
 async def ping(message):
     if message.author.guild_permissions.administrator:
@@ -359,6 +360,27 @@ async def rgb_fans(message):
         await m.delete(delay=10)
         return
     await message.reply(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def gpu_rank(message, resolution: str):
+    match resolution:
+        case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k':
+            cdn = find_image('1080p-ult')
+        case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k':
+            cdn = find_image('1440p-ult')
+        case '2160p' | '2160' | 'uhd' | 'UHD' | '4k':
+            cdn = find_image('2160p-ult')
+        case _:
+            m = await message.reply(f'Unbekannte Auflösung: {resolution}')
+            await m.delete(delay=10)
+            return
+    
+    # save file if not already cached
+    filename = '.cache' + cdn[cdn.rfind('/'):]
+    if not os.path.exists(filename):
+        with open(filename, 'wb') as f:
+            f.write(requests.get(cdn).content)
+
+    await message.reply('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html>', file=discord.File(filename))
 
 # TODO: cpu ranking links thw
 
