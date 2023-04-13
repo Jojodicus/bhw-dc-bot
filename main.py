@@ -154,11 +154,12 @@ async def ram(ctx):
 async def rgblüfter(ctx):
     await ctx.respond(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
+# todo: add rt
 def find_image(resolution: str) -> str:
     data = requests.get('https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html')
     soup = BeautifulSoup(data.text, 'html.parser')
     for s in soup.find_all('script', type='text/javascript'):
-        if not 'GPU benchmarks hierarchy ray tracing generational performance chart' in s.text:
+        if not 'GPU benchmarks hierarchy rasterization generational performance chart' in s.text:
             continue
         for line in s.text.split('\n'):
             if not 'var data = ' in line:
@@ -169,10 +170,10 @@ def find_image(resolution: str) -> str:
             data = json.loads(line)
             for row in data['galleryData']:
                 img = row['image']
-                if img['name'] == f'gpu-benchmarks-dxr-generational-performance-chart-{resolution}.png':
+                if img['name'] == f'gpu-benchmarks-rast-generational-performance-chart-{resolution}.png':
                     return img['src']
 
-@bot.slash_command(name='gpu-ranking', description='Leistungsranking von Grafikkarten anhand der FPS')
+@bot.slash_command(name='gpu-ranking', description='Leistungsranking von Grafikkarten anhand der FPS. Optionen: 1080p, 1440p, 2160p')
 @is_atleast(minRole)
 async def gpu_ranking(ctx, resolution: str):
     # TODO: scrape from website
@@ -236,7 +237,7 @@ async def metafrage(message):
         await m.delete(delay=10)
         return
 
-    embed = discord.Embed(title='Metafragen', color=discord.Color.brand_red(), url='https://wiki.tilde.fun/de/guide/questions')
+    embed = discord.Embed(title='Metafragen', color=discord.Color.blurple(), url='https://wiki.tilde.fun/de/guide/questions')
     embed.add_field(name='', value='''Metafragen sind Fragen, welche oft vor einer richtigen Frage gestellt werden.
 
 Klassische Beispiele für Metafragen sind:
@@ -259,7 +260,7 @@ async def psu(message):
         await m.delete(delay=10)
         return
 
-    embed = discord.Embed(title='Tier A Netzteile (nach cultists.network rev. 17.0f)', color=discord.Color.blue(), url='https://cultists.network/140/psu-tier-list/')
+    embed = discord.Embed(title='Tier A Netzteile (nach cultists.network rev. 17.0f)', color=discord.Color.blurple(), url='https://cultists.network/140/psu-tier-list/')
     embed.add_field(name='1000+W', value='https://geizhals.de/?cat=WL-2652571')
     embed.add_field(name='800+W', value='https://geizhals.de/?cat=WL-2652570')
     embed.add_field(name='700+W', value='https://geizhals.de/?cat=WL-2652569')
