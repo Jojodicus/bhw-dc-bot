@@ -224,6 +224,26 @@ async def command_handler(message):
             await metafrage(message)
         case ['psu']:
             await psu(message)
+        case ['ssd' | 'ssds' | '1tbssd' | '1tb-ssd' | 'ssd1tb' | 'ssd-1tb']:
+            await ssd_1tb(message)
+        case ['2tbssd' | '2tb-ssd' | 'ssd2tb' | 'ssd-2tb']:
+            await ssd_2tb(message)
+        case ['4tbssd' | '4tb-ssd' | 'ssd4tb' | 'ssd-4tb']:
+            await ssd_4tb(message)
+        case ['aio' | 'wasserkühlung' | 'wasserkühler']:
+            await allinone(message)
+        case ['case' | 'gehäuse']:
+            await cases(message)
+        case ['cpukühler' | 'cpu-kühler' | 'cpu-cooler']:
+            await cpu_cooler(message)
+        case ['lüfter' | 'fan' | 'fans']:
+            await fans(message)
+        case ['netzteil' | 'nt']:
+            await psus(message)
+        case ['ram']:
+            await rams(message)
+        case ['rgblüfter' | 'rgb-lüfter' | 'rgb-fan' | 'rgb-fans']:
+            await rgb_fans(message)
 
 async def ping(message):
     if message.author.guild_permissions.administrator:
@@ -270,7 +290,75 @@ async def psu(message):
     # embed.add_field(name='Seasonic', value='https://geizhals.de/?cat=WL-2678896')
     await message.reply(embed=embed)
 
+async def ssd_1tb(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten 1TB-SSDs: https://gh.de/g/q0\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
+async def ssd_2tb(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten 2TB-SSDs: https://gh.de/g/qP\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def ssd_4tb(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten 4TB-SSDs: https://gh.de/g/qW\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def allinone(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten AiO-Wasserkühlungen: https://gh.de/g/Xg\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def cases(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten Gehäuse für guten Airflow: https://gh.de/g/XY\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def cpu_cooler(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten CPU-Luftkühler: https://gh.de/g/Xn\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def fans(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten Gehäuselüfter ohne RGB: https://gh.de/g/q6\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def psus(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten Netzteile: https://gh.de/g/1H\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def rams(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr den aktuell besten RAM: https://gh.de/g/qC\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def rgb_fans(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    await message.reply(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 # TODO: cpu ranking links thw
 
