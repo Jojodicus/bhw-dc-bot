@@ -362,6 +362,11 @@ async def rgb_fans(message):
     await message.reply(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
 async def gpu_rank(message, resolution: str):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+        await m.delete(delay=10)
+        return
+    
     match resolution:
         case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k':
             cdn = find_image('1080p-ult')
