@@ -22,13 +22,14 @@ nano .env # BHW_TOKEN und GH_API_COOKIE entsprechend setzen
 chmod +x main.py
 ```
 
-danach kann der Bot mittels `./main.py` ausgeführt werden. Um das ganze auf zB einem v-server persistent zu halten ist das Tool `tmux` zu empfehlen. Nutzung dazu:
+Danach kann der Bot mittels `./main.py` ausgeführt werden. Um das ganze auf zB einem v-server persistent zu halten ist das Tool `tmux` zu empfehlen. Nutzung dazu:
 
 ```bash
 tmux
 # tmux env öffnet sich
 ./main.py # start wie normal
 # um env in den Hintergrund zu schieben: 'Strg'+'b', dann 'd'
+... # hier auch logout möglich
 # zum in den Vordergrund holen:
 tmux attach
 ```
