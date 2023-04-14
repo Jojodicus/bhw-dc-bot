@@ -5,7 +5,7 @@ Helferlein für die Bens Hardware Discord Community
 ## Features
 
 - Erkennt Pings an Bens_Hardware#0438 und weist den Nutzer auf die entsprechenden Regeln hin
-- Findet Links zu lokalen und/oder nicht-öffentlichen [Geizhals](geizhals.de) Listen in Nachrichten und erklärt, wie man diese öffentlich macht
+- Findet Links zu lokalen und/oder nicht-öffentlichen [Geizhals](https://geizhals.de/) Listen in Nachrichten und erklärt, wie man diese öffentlich macht
 - diverse [%](#-commands) und [/](#-commands-1) Commands für Hardware-Empfehlungen von Ben und generell QOL für Hardware-Support
 
 ## Installation und Ausführung
