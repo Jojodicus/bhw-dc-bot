@@ -10,7 +10,7 @@ Helferlein für die Bens Hardware Discord Community
 
 ## Installation und Ausführung
 
-Für den Bot wird ein Linux System mit Python3.10 empfohlen.
+Zum Hosten des Bots wird ein Linux System mit Python3.10 empfohlen.
 
 ```bash
 git clone https://github.com/Jojodicus/bhw-dc-bot
