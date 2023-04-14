@@ -250,6 +250,8 @@ async def command_handler(message):
             await rams(message)
         case ['rgblüfter' | 'rgb-lüfter' | 'rgb-fan' | 'rgb-fans']:
             await rgb_fans(message)
+        case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark']:
+            await message.reply(r'Bitte gib eine Auflösung an: `%gpu-ranking (1080p, 1440p, 2160p)`')
         case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark', resolution]:
             await gpu_rank(message, resolution)
 
