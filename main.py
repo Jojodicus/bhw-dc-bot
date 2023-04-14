@@ -42,6 +42,13 @@ async def on_message(message):
         await command_handler(message)
         return
 
+    # Ben pings
+    if '<@234720287449546753>' in message.content:
+        embed = discord.Embed(title='Ben pingen', color=discord.Color.blurple())
+        embed.add_field(name='', value='''Bitte beachte, dass es nicht erwünscht ist, Ben in Nachrichten zu erwähnen. Er erhält täglich hunderte Pings und Privatnachrichten und kann nicht jedem antworten. Wenn du Ben kontaktieren möchtet, solltest du das über den Twitch-Chat tun.
+Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen, oder wenn dies explizit gewünscht ist. Weitere Informationen dazu findest du im <#925137616481947678>''')
+        await message.reply(embed=embed)
+
     # TODO: more efficient link searching
 
     # local/private lists
