@@ -54,14 +54,14 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
     # local/private lists
     locals = re.findall(r'https?://geizhals..?.?/wishlists/local-[0-9]+', message.content)
     if locals:
-        await message.reply(f'Diese Wunschliste (<{locals[0]}>) ist lokal und nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+        await message.reply(f'Diese Wunschliste (<{locals[0]}>) ist lokal und nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
         return
     private = re.findall(r'https?://geizhals..?.?/wishlists/[0-9]+', message.content)
     for link in private:
         page = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', link)
         page = requests.get(page, headers={'cookie': API_COOKIE})
         if r'{"response":null}' in page.text:
-            await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+            await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
         if r'{"code":403,"error":"Authentication failed"}' in page.text:
             await send_msg_to_dev(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
@@ -80,13 +80,13 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
     for link in links:
         # local list
         if sum([c.isdigit() for c in link]) <= 1:
-            await message.reply(f'Diese Wunschliste (<{link}>) ist lokal und nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+            await message.reply(f'Diese Wunschliste (<{link}>) ist lokal und nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
         
         # private list
         page = requests.get(link)
         if 'STATUS Code: 403 - Forbidden' in page.text:
-            await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+            await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
             return
     """
 
