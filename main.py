@@ -317,7 +317,7 @@ async def ping(ctx):
     embed.add_field(name='Latenz', value=f'{bot.latency * 1000:.0f} ms')
     timedelta = datetime.datetime.utcnow() - start_time
     embed.add_field(name='Server', value=f'{len(bot.guilds)}')
-    embed.add_field(name='Benutzer', value=f'{ctx.guild.member_count}')
+    embed.add_field(name='Benutzer', value=f'{ctx.guild.member_count}/{sum([g.member_count for g in bot.guilds])}')
     embed.add_field(name='Uptime', value=f'{timedelta.days} Tage, {timedelta.seconds // 3600} Stunden, {(timedelta.seconds // 60) % 60} Minuten')
     embed.set_footer(text=f'{bot.user.name} {bot.user.id}', icon_url=bot.user.display_avatar.url)
     await ctx.respond(embed=embed, delete_after=30)
