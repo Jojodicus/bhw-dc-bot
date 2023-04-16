@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import os
+import sys
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -9,6 +10,8 @@ import requests
 import shlex
 from bs4 import BeautifulSoup
 import json
+import time
+import datetime
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -20,17 +23,25 @@ intents.message_content = True
 prefix = '%'
 bot = discord.Bot(intents=intents)
 
+# minimum role to use commands
+minRole = 'Silber'
+
 async def send_msg_to_dev(msg):
     jojo = await bot.fetch_user(226054688368361474) # Jojodicus#0001, bot dev
     await jojo.send(msg)
 
+
 @bot.event
 async def on_ready():
+    global start_time
+    start_time = datetime.datetime.utcnow()
     print(f'{bot.user} is up and running on {len(bot.guilds)} servers!')
 
-# @bot.event
-# async def on_error(event, *args, **kwargs):
-#     print(f'{event} - {args} - {kwargs}')
+
+@bot.event
+async def on_application_command_error(ctx, error):
+    await send_msg_to_dev(f'Error in command {ctx.command.name}:\n{ctx}\n{error}')
+
 
 @bot.event
 async def on_message(message):
@@ -67,28 +78,28 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
             await send_msg_to_dev(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
             # TODO: DM to bot sets new api cookie
 
-    """ LEGACY
-    # fix broken links
-    links = re.findall(r'https?://geizhals..?.?/https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3DWL-[0-9]+', message.content)
-    if links:
-        links = '\n'.join([re.sub(r'https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3D', '?cat=', link) for link in links])
-        await message.reply(f'Die Nachricht enthält kaputte Geizhals-Links, hier einmal korrigiert:\n{links}')
-        return
+    # LEGACY
+    # # fix broken links
+    # links = re.findall(r'https?://geizhals..?.?/https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3DWL-[0-9]+', message.content)
+    # if links:
+    #     links = '\n'.join([re.sub(r'https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3D', '?cat=', link) for link in links])
+    #     await message.reply(f'Die Nachricht enthält kaputte Geizhals-Links, hier einmal korrigiert:\n{links}')
+    #     return
 
-    # local/private lists
-    links = re.findall(r'https?://geizhals..?.?/\?cat=WL-?[0-9]*', message.content)
-    for link in links:
-        # local list
-        if sum([c.isdigit() for c in link]) <= 1:
-            await message.reply(f'Diese Wunschliste (<{link}>) ist lokal und nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
-            return
+    # # local/private lists
+    # links = re.findall(r'https?://geizhals..?.?/\?cat=WL-?[0-9]*', message.content)
+    # for link in links:
+    #     # local list
+    #     if sum([c.isdigit() for c in link]) <= 1:
+    #         await message.reply(f'Diese Wunschliste (<{link}>) ist lokal und nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+    #         return
         
-        # private list
-        page = requests.get(link)
-        if 'STATUS Code: 403 - Forbidden' in page.text:
-            await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
-            return
-    """
+    #     # private list
+    #     page = requests.get(link)
+    #     if 'STATUS Code: 403 - Forbidden' in page.text:
+    #         await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+    #         return
+
 
 def has_role_or_higher(user, rolename, guild):
     rns = list(map(lambda x: x.name, guild.roles))
@@ -99,133 +110,22 @@ def has_role_or_higher(user, rolename, guild):
     highest = user.roles[-1].name
     return rns.index(highest) > rns.index(rolename)
 
+
 def is_atleast(rolename):
     async def predicate(ctx):
         return has_role_or_higher(ctx.author, rolename, ctx.guild)
     return commands.check(predicate)
 
-minRole = 'Silber'
-
-@bot.slash_command(name='1tbssd', description='Bens Empfehlung für 1TB SSDs')
-@is_atleast(minRole)
-async def ssd1tb(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten 1TB-SSDs: https://gh.de/g/q0\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='2tbssd', description='Bens Empfehlung für 2TB SSDs')
-@is_atleast(minRole)
-async def ssd2tb(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten 2TB-SSDs: https://gh.de/g/qP\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='4tbssd', description='Bens Empfehlung für 4TB SSDs')
-@is_atleast(minRole)
-async def ssd4tb(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten 4TB-SSDs: https://gh.de/g/qW\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='aio', description='Bens Empfehlung für AIO-Wasserkühlungen')
-@is_atleast(minRole)
-async def aio(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten AiO-Wasserkühlungen: https://gh.de/g/Xg\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='case', description='Bens Empfehlung für Gehäuse')
-@is_atleast(minRole)
-async def case(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten Gehäuse für guten Airflow: https://gh.de/g/XY\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='cpukühler', description='Bens Empfehlung für CPU-Kühler')
-@is_atleast(minRole)
-async def cpukühler(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten CPU-Luftkühler: https://gh.de/g/Xn\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='gehäuse', description='Bens Empfehlung für Gehäuse')
-@is_atleast(minRole)
-async def gehäuse(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten Gehäuse für guten Airflow: https://gh.de/g/XY\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='lüfter', description='Bens Empfehlung für Lüfter ohne RGB')
-@is_atleast(minRole)
-async def lüfter(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten Gehäuselüfter ohne RGB: https://gh.de/g/q6\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='netzteil', description='Bens Empfehlung für Netzteile')
-@is_atleast(minRole)
-async def netzteil(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten Netzteile: https://gh.de/g/1H\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='ram', description='Bens Empfehlung für RAM')
-@is_atleast(minRole)
-async def ram(ctx):
-    await ctx.respond(f'Hier findet Ihr den aktuell besten RAM: https://gh.de/g/qC\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-@bot.slash_command(name='rgblüfter', description='Bens Empfehlung für Lüfter mit RGB')
-@is_atleast(minRole)
-async def rgblüfter(ctx):
-    await ctx.respond(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
-
-# todo: add rt
-def find_image(resolution: str) -> str:
-    data = requests.get('https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html')
-    soup = BeautifulSoup(data.text, 'html.parser')
-    for s in soup.find_all('script', type='text/javascript'):
-        if not 'GPU benchmarks hierarchy rasterization generational performance chart' in s.text:
-            continue
-        for line in s.text.split('\n'):
-            if not 'var data = ' in line:
-                continue
-            line = line.replace('var data = ', '')
-            line = line.replace(';', '')
-
-            data = json.loads(line)
-            for row in data['galleryData']:
-                img = row['image']
-                if img['name'] == f'gpu-benchmarks-rast-generational-performance-chart-{resolution}.png':
-                    return img['src']
-
-@bot.slash_command(name='gpu-ranking', description='Leistungsranking von Grafikkarten anhand der FPS. Optionen: 1080p, 1440p, 2160p')
-@is_atleast(minRole)
-async def gpu_ranking(ctx, resolution: str):
-    match resolution:
-        case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k':
-            cdn = find_image('1080p-ult')
-        case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k':
-            cdn = find_image('1440p-ult')
-        case '2160p' | '2160' | 'uhd' | 'UHD' | '4k':
-            cdn = find_image('2160p-ult')
-        case _:
-            await ctx.respond(f'Unbekannte Auflösung: {resolution}', ephemeral=True, delete_after=10)
-            return
-    
-    # save file if not already cached
-    filename = '.cache' + cdn[cdn.rfind('/'):]
-    if not os.path.exists(filename):
-        with open(filename, 'wb') as f:
-            f.write(requests.get(cdn).content)
-
-    await ctx.respond('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html>', file=discord.File(filename))
-
-@ssd1tb.error
-@ssd2tb.error
-@ssd4tb.error
-@aio.error
-@case.error
-@cpukühler.error
-@gehäuse.error
-@lüfter.error
-@netzteil.error
-@ram.error
-@rgblüfter.error
-@gpu_ranking.error
-async def insufficient_role(ctx, error):
-    if isinstance(error, commands.errors.CheckFailure):
-        await ctx.respond(f'Du brauchst mindestens die Rolle \'{minRole}\' für diesen Befehl.', ephemeral=True, delete_after=10)
-    else:
-        await send_msg_to_dev(f'ctx: {ctx}\n\nerror:{error}')
 
 async def command_handler(message):
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du musst mindestens {minRole} sein, um Befehle zu nutzen')
+        await m.delete(delay=10)
+        return
+
     cmd = shlex.split(message.content[len(prefix):])
 
     match cmd:
-        case ['ping']:
-            await ping(message)
         case ['meta' | 'metafrage']:
             await metafrage(message)
         case ['psu']:
@@ -237,33 +137,28 @@ async def command_handler(message):
         case ['4tbssd' | '4tb-ssd' | 'ssd4tb' | 'ssd-4tb']:
             await ssd_4tb(message)
         case ['aio' | 'wasserkühlung' | 'wasserkühler']:
-            await allinone(message)
+            await aio(message)
         case ['case' | 'gehäuse']:
-            await cases(message)
+            await case(message)
         case ['cpukühler' | 'cpu-kühler' | 'cpu-cooler']:
-            await cpu_cooler(message)
+            await cpukuehler(message)
         case ['lüfter' | 'fan' | 'fans']:
             await fans(message)
         case ['netzteil' | 'nt']:
-            await psus(message)
+            await netzteil(message)
         case ['ram']:
-            await rams(message)
+            await ram(message)
         case ['rgblüfter' | 'rgb-lüfter' | 'rgb-fan' | 'rgb-fans']:
-            await rgb_fans(message)
+            await rgbluefter(message)
         case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark']:
             await message.reply(r'Bitte gib eine Auflösung an: `%gpu-ranking (1080p, 1440p, 2160p)`')
         case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark', resolution]:
-            await gpu_rank(message, resolution)
+            await gpu_ranking(message, resolution)
 
-async def ping(message):
-    if message.author.guild_permissions.administrator:
-        await message.reply(f'pong - {int(bot.latency * 1000)}ms')
-
-minRole2 = 'Silber'
 
 async def metafrage(message):
-    if not has_role_or_higher(message.author, minRole2, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
+    if not has_role_or_higher(message.author, minRole, message.guild):
+        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole}\' für diesen Befehl.')
         await m.delete(delay=10)
         return
 
@@ -284,13 +179,9 @@ Stelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies ersp
         await message.reply(embed=embed)
     return
 
-async def psu(message):
-    if not has_role_or_higher(message.author, minRole2, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
 
-    embed = discord.Embed(title='Tier A Netzteile (nach cultists.network rev. 17.0f)', color=discord.Color.blurple(), url='https://cultists.network/140/psu-tier-list/')
+async def psu(message):
+    embed = discord.Embed(title='Tier A Netzteile (nach cultists.network rev. 17.0f)', color=discord.Color.brand_red(), url='https://cultists.network/140/psu-tier-list/')
     embed.add_field(name='1000+W', value='https://geizhals.de/?cat=WL-2652571')
     embed.add_field(name='800+W', value='https://geizhals.de/?cat=WL-2652570')
     embed.add_field(name='700+W', value='https://geizhals.de/?cat=WL-2652569')
@@ -300,102 +191,160 @@ async def psu(message):
     # embed.add_field(name='Seasonic', value='https://geizhals.de/?cat=WL-2678896')
     await message.reply(embed=embed)
 
+
 async def ssd_1tb(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten 1TB-SSDs: https://gh.de/g/q0\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='1TB-SSDs', color=0x008380, url='https://gh.de/g/q0')
+    embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu 1TB-SSDs klicke auf den Titel.')
+    await message.reply(embed=embed)
+
 
 async def ssd_2tb(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten 2TB-SSDs: https://gh.de/g/qP\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='2TB-SSDs', color=0x008380, url='https://gh.de/g/qP')
+    embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu 2TB-SSDs klicke auf den Titel.')
+    await message.reply(embed=embed)
+
 
 async def ssd_4tb(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten 4TB-SSDs: https://gh.de/g/qW\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='4TB-SSDs', color=0x008380, url='https://gh.de/g/qW')
+    embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu 4TB-SSDs klicke auf den Titel.')
+    await message.reply(embed=embed)
 
-async def allinone(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten AiO-Wasserkühlungen: https://gh.de/g/Xg\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
-async def cases(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten Gehäuse für guten Airflow: https://gh.de/g/XY\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+async def aio(message):
+    embed = discord.Embed(title='AiO Wasserkühlungen', color=0x008380, url='https://gh.de/g/Xg')
+    embed.set_thumbnail(url='https://www.arctic.de/media/0b/7f/f3/1632824378/liquid-freezer-ii-280-argb-g00.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu AiO Wasserkühlungen klicke auf den Titel.')
+    await message.reply(embed=embed)
 
-async def cpu_cooler(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten CPU-Luftkühler: https://gh.de/g/Xn\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+
+async def case(message):
+    embed = discord.Embed(title='Gehäuse', color=0x008380, url='https://gh.de/g/XY')
+    embed.set_thumbnail(url='https://endorfy.com/wp-content/products/EY2A006_Signum-300-ARGB/Media%20(pictures)/WebP/EY2A006-endorfy-signum-300-argb-01a-webp95.d20221216-u095934.webp')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu Gehäusen klicke auf den Titel.')
+    await message.reply(embed=embed)
+
+
+async def cpukuehler(message):
+    embed = discord.Embed(title='CPU-Luftkühler', color=0x008380, url='https://gh.de/g/Xn')
+    embed.set_thumbnail(url='https://www.arctic.de/media/3c/68/58/1635319800/freezer_i35_argb_g00.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu CPU-Luftkühlern klicke auf den Titel.')
+    await message.reply(embed=embed)
+
 
 async def fans(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten Gehäuselüfter ohne RGB: https://gh.de/g/q6\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='Gehäuselüfter', color=0x008380, url='https://gh.de/g/q6')
+    embed.set_thumbnail(url='https://www.arctic.de/media/7b/fd/aa/1670325590/P12_MAX_G00.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu Gehäuselüftern ohne RGB klicke auf den Titel.')
+    await message.reply(embed=embed)
 
-async def psus(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten Netzteile: https://gh.de/g/1H\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
-async def rams(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr den aktuell besten RAM: https://gh.de/g/qC\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+async def netzteil(message):
+    embed = discord.Embed(title='Netzteile', color=0x008380, url='https://gh.de/g/1H')
+    embed.set_thumbnail(url='https://www.corsair.com/medias/sys_master/images/images/h7b/hbc/9760776028190/base-rmx-2021-config/Gallery/RM850x_01/-base-rmx-2021-config-Gallery-RM850x-01.png_1200Wx1200H')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu Netzteilen klicke auf den Titel.')
+    await message.reply(embed=embed)
 
-async def rgb_fans(message):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    await message.reply(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
 
-async def gpu_rank(message, resolution: str):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole2}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-    
+async def ram(message):
+    embed = discord.Embed(title='RAM', color=0x008380, url='https://gh.de/g/qC')
+    embed.set_thumbnail(url='https://www.gskill.com/_upload/images/156274365910.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu RAM klicke auf den Titel.')
+    await message.reply(embed=embed)
+
+
+async def rgbluefter(message):
+    embed = discord.Embed(title='RGB-Gehäuselüfter', color=0x008380, url='https://gh.de/g/XQ')
+    embed.set_thumbnail(url='https://www.silentiumpc.com/wp-content/uploads/2021/03/spc235-spc-stella-hp-argb-120-pwm-rev11-01-png-www.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu RGB-Gehäuselüftern klicke auf den Titel.')
+    await message.reply(embed=embed)
+
+
+# TODO: add rt
+def find_image_gpu(resolution: str) -> str:
+    # TODO: use non-blocking requests
+    data = requests.get('https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html')
+    soup = BeautifulSoup(data.text, 'html.parser')
+    for s in soup.find_all('script', type='text/javascript'):
+        if not 'GPU benchmarks hierarchy rasterization generational performance chart' in s.text:
+            continue
+        for line in s.text.split('\n'):
+            if not 'var data = ' in line:
+                continue
+            line = line.replace('var data = ', '')
+            line = line.replace(';', '')
+
+            data = json.loads(line)
+            for row in data['galleryData']:
+                img = row['image']
+                if img['name'] == f'gpu-benchmarks-rast-generational-performance-chart-{resolution}.png':
+                    return img['src']
+
+
+async def gpu_ranking(message, resolution: str):
     match resolution:
         case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k':
-            cdn = find_image('1080p-ult')
+            cdn = find_image_gpu('1080p-ult')
         case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k':
-            cdn = find_image('1440p-ult')
+            cdn = find_image_gpu('1440p-ult')
         case '2160p' | '2160' | 'uhd' | 'UHD' | '4k':
-            cdn = find_image('2160p-ult')
+            cdn = find_image_gpu('2160p-ult')
         case _:
             m = await message.reply(f'Unbekannte Auflösung: {resolution}')
             await m.delete(delay=10)
             return
     
     # save file if not already cached
-    filename = '.cache' + cdn[cdn.rfind('/'):]
-    if not os.path.exists(filename):
-        with open(filename, 'wb') as f:
+    filename = cdn[cdn.rfind('/')+1:]
+    filepath = '.cache/' + filename
+    if not os.path.exists(filepath):
+        with open(filepath, 'wb') as f:
             f.write(requests.get(cdn).content)
 
-    await message.reply('Quelle: <https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html>', file=discord.File(filename))
+    embed = discord.Embed(title=f'GPU-Ranking für {resolution}', url='https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html', color=discord.Color.brand_red())
+    file = discord.File(filepath, filename=filename)
+    embed.set_image(url=f'attachment://{filename}')
+    await message.reply(embed=embed, file=file)
 
 # TODO: cpu ranking links thw
+
+@bot.slash_command(name='ping', description='Überprüft Vitalfunktionen des Bots')
+@commands.has_permissions(administrator=True)
+async def ping(ctx):
+    embed = discord.Embed(title=f'{bot.user.name} ist online', color=discord.Color.fuchsia())
+    embed.add_field(name='Latenz', value=f'{bot.latency * 1000:.0f} ms')
+    timedelta = datetime.datetime.utcnow() - start_time
+    embed.add_field(name='Server', value=f'{len(bot.guilds)}')
+    embed.add_field(name='Benutzer', value=f'{len(bot.users)}')
+    embed.add_field(name='Uptime', value=f'{timedelta.days} Tage, {timedelta.seconds // 3600} Stunden, {(timedelta.seconds // 60) % 60} Minuten')
+    embed.set_footer(text=f'{bot.user.name} {bot.user.id}', icon_url=bot.user.display_avatar.url)
+    await ctx.respond(embed=embed, delete_after=30)
+
+
+@bot.slash_command(name='reload', description='Startet den Bot neu')
+@commands.has_permissions(administrator=True)
+async def reload(ctx):
+    embed = discord.Embed(title=f'{bot.user.name} wird neu gestartet...', color=0x00ff00)
+    await ctx.respond(embed=embed, ephemeral=True)
+    print('Restarting.')
+    os.execv(sys.executable, ['python3'] + sys.argv)
+
+
+@bot.slash_command(name='update', description='Aktualisiert und startet den Bot neu')
+@commands.has_permissions(administrator=True)
+async def update(ctx):
+    embed = discord.Embed(title=f'{bot.user.name} wird aktualisiert...', color=0xffff00)
+    await ctx.respond(embed=embed, ephemeral=True)
+    print('Updating.')
+    retval = os.system('git pull')
+    if retval != 0:
+        await ctx.edit(embed=discord.Embed(title=f'{bot.user.name} konnte nicht aktualisiert werden.', color=0xff0000))
+        await send_msg_to_dev(f'{bot.user.name} konnte nicht aktualisiert werden. Returncode: {retval}')
+        return
+    await ctx.edit(embed=discord.Embed(title=f'{bot.user.name} wurde aktualisiert, starte neu...', color=0x00ff00))
+    os.execv(sys.executable, ['python3'] + sys.argv)
+
 
 bot.run(TOKEN)
