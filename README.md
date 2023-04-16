@@ -6,7 +6,8 @@ Helferlein für die Bens Hardware Discord Community
 
 - Erkennt Pings an Bens_Hardware#0438 und weist den Nutzer auf die entsprechenden Regeln hin
 - Findet Links zu lokalen und/oder nicht-öffentlichen [Geizhals](https://geizhals.de/) Listen in Nachrichten und erklärt, wie man diese öffentlich macht
-- diverse [%](#-commands) und [/](#-commands-1) Commands für Hardware-Empfehlungen von Ben und generell QOL für Hardware-Support
+- diverse [%](#-commands) Commands für Hardware-Empfehlungen von Ben und generell QOL für Hardware-Support
+- [/](#-commands-1) Commands für Administration und Konfiguation des Bots
 
 ## Installation und Ausführung
 
@@ -36,13 +37,12 @@ tmux attach
 
 ## %-Commands
 
-Commands werden mit % geprefixt. Falls nicht anders spezifiziert benötigt man zur Ausführung mindestens die Rolle `Silber` (sofern diese auf dem Server existiert).
+Commands werden mit % geprefixt. Zur Ausführung benötigt man mindestens die Rolle `Silber` (sofern diese auf dem Server existiert).
 
 Unterstützte Befehle:
 
 | Command | Beschreibung |
 |---------|--------------|
-| %ping   | prüft, ob der Bot online ist. Nur für Administratoren |
 | %1tbssd | Bens Empfehlungen für 1TB-SSDs |
 | %2tbssd | Bens Empfehlungen für 2TB-SSDs |
 | %4tbssd | Bens Empfehlungen für 4TB-SSDs |
@@ -54,10 +54,18 @@ Unterstützte Befehle:
 | %ram    | Bens Empfehlungen für Arbeitsspeicher |
 | %rgblüfter | Bens Empfehlungen für RGB-Lüfter |
 | %meta | Weist einen Nutzer auf eine Metafrage hin |
-| %gpu-ranking (res) | Sendet eine Benchmark-Grafik zum Vergleich aktueller Grafikkarten in FHD/WQHD/UHD auf Basis von [tom'sHARDWARE](https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html) |
+| %gpu-ranking (resolution) | Sendet eine Benchmark-Grafik zum Vergleich aktueller Grafikkarten in FHD/WQHD/UHD auf Basis von [tom'sHARDWARE]. (https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html) |
 | %psu | Sendet eine Übersicht von Tier-A Netzteilen auf Basis von [CULTISTS NETWORK](https://cultists.network/140/psu-tier-list/) nach Leistung sortiert |
 
 
 ## /-Commands
 
-Einige der %-Commands (wie zB die Empfehlungen von Ben) sind auch als Slash-Commands realisiert. Der Vorteil davon ist, dass diese dann mitsamt Beschreibung in der Command-Übersicht auftauchen. Da der Zielserver allerdings keine Slash-Commands für Community-Member zulässt, ist dieses Feature hauptsächlich für das Team und die Entwicklung gedacht.
+Die Konfiguration des Bots wird mittels Slash-Commands realisiert. Diese sind auf Serveradministratoren beschränkt. Der Vorteil von Slash-Commands ist, dass diese mitsamt Beschreibung in der Command-Übersicht auftauchen und man somit schnell die richtige Syntax findet.
+
+Unterstützte Befehle:
+
+| Command | Beschreibung |
+|---------|--------------|
+| /ping   | Überprüft Online-Status sowie Latenz des Bots |
+| /reload | Startet den Bot neu |
+| /update | Holt sich via `git pull` den aktuellsten Quellcode und startet danach neu |
