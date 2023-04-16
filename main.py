@@ -96,6 +96,7 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
     #         await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
     #         return
 
+
 def has_role_or_higher(user, rolename, guild):
     rns = list(map(lambda x: x.name, guild.roles))
 
