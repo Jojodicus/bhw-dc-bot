@@ -10,6 +10,8 @@ import requests
 import shlex
 from bs4 import BeautifulSoup
 import json
+import time
+import datetime
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -31,6 +33,8 @@ async def send_msg_to_dev(msg):
 
 @bot.event
 async def on_ready():
+    global start_time
+    start_time = datetime.datetime.utcnow()
     print(f'{bot.user} is up and running on {len(bot.guilds)} servers!')
 
 
@@ -189,47 +193,73 @@ async def psu(message):
 
 
 async def ssd_1tb(message):
-    await message.reply(f'Hier findet Ihr die aktuell besten 1TB-SSDs: https://gh.de/g/q0\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='1TB-SSDs', color=0x008380, url='https://gh.de/g/q0')
+    embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu 1TB-SSDs klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def ssd_2tb(message):
-    await message.reply(f'Hier findet Ihr die aktuell besten 2TB-SSDs: https://gh.de/g/qP\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='2TB-SSDs', color=0x008380, url='https://gh.de/g/qP')
+    embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu 2TB-SSDs klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def ssd_4tb(message):
-    # embed = discord.Embed(title='4TB-SSDs', color=0x008380, url='https://gh.de/g/qW')
-    # embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
-    # embed.add_field(name='', value='Für Bens Empfehlungen zu 4TB-SSDs klicke auf den Titel.\nWeitere Kompenten findest du in den <#942543468851499068>')
-    # await message.reply(embed=embed)
-    await message.reply(f'Hier findet Ihr die aktuell besten 4TB-SSDs: https://gh.de/g/qW\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='4TB-SSDs', color=0x008380, url='https://gh.de/g/qW')
+    embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu 4TB-SSDs klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def aio(message):
-    await message.reply(f'Hier findet Ihr die aktuell besten AiO-Wasserkühlungen: https://gh.de/g/Xg\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='AiO Wasserkühlungen', color=0x008380, url='https://gh.de/g/Xg')
+    embed.set_thumbnail(url='https://www.arctic.de/media/0b/7f/f3/1632824378/liquid-freezer-ii-280-argb-g00.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu AiO Wasserkühlungen klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def case(message):
-    await message.reply(f'Hier findet Ihr die aktuell besten Gehäuse für guten Airflow: https://gh.de/g/XY\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='Gehäuse', color=0x008380, url='https://gh.de/g/XY')
+    embed.set_thumbnail(url='https://endorfy.com/wp-content/products/EY2A006_Signum-300-ARGB/Media%20(pictures)/WebP/EY2A006-endorfy-signum-300-argb-01a-webp95.d20221216-u095934.webp')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu Gehäusen klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def cpukuehler(message):
-    await message.reply(f'Hier findet Ihr die aktuell besten CPU-Luftkühler: https://gh.de/g/Xn\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='CPU-Luftkühler', color=0x008380, url='https://gh.de/g/Xn')
+    embed.set_thumbnail(url='https://www.arctic.de/media/3c/68/58/1635319800/freezer_i35_argb_g00.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu CPU-Luftkühlern klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def fans(message):
-    await message.reply(f'Hier findet Ihr die aktuell besten Gehäuselüfter ohne RGB: https://gh.de/g/q6\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='Gehäuselüfter', color=0x008380, url='https://gh.de/g/q6')
+    embed.set_thumbnail(url='https://www.arctic.de/media/7b/fd/aa/1670325590/P12_MAX_G00.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu Gehäuselüftern ohne RGB klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def netzteil(message):
-    await message.reply(f'Hier findet Ihr die aktuell besten Netzteile: https://gh.de/g/1H\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='Netzteile', color=0x008380, url='https://gh.de/g/1H')
+    embed.set_thumbnail(url='https://www.corsair.com/medias/sys_master/images/images/h7b/hbc/9760776028190/base-rmx-2021-config/Gallery/RM850x_01/-base-rmx-2021-config-Gallery-RM850x-01.png_1200Wx1200H')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu Netzteilen klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def ram(message):
-    await message.reply(f'Hier findet Ihr den aktuell besten RAM: https://gh.de/g/qC\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='RAM', color=0x008380, url='https://gh.de/g/qC')
+    embed.set_thumbnail(url='https://www.gskill.com/_upload/images/156274365910.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu RAM klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 async def rgbluefter(message):
-    await message.reply(f'Hier findet Ihr die aktuell besten RGB-Gehäuselüfter: https://gh.de/g/XQ\nWeitere Empfehlungen für Komponenten -> <#942543468851499068>')
+    embed = discord.Embed(title='RGB-Gehäuselüfter', color=0x008380, url='https://gh.de/g/XQ')
+    embed.set_thumbnail(url='https://www.silentiumpc.com/wp-content/uploads/2021/03/spc235-spc-stella-hp-argb-120-pwm-rev11-01-png-www.png')
+    embed.add_field(name='', value='Für Bens Empfehlungen zu RGB-Gehäuselüftern klicke auf den Titel.')
+    await message.reply(embed=embed)
 
 
 # TODO: add rt
@@ -283,7 +313,14 @@ async def gpu_ranking(message, resolution: str):
 @bot.slash_command(name='ping', description='Überprüft Vitalfunktionen des Bots')
 @commands.has_permissions(administrator=True)
 async def ping(ctx):
-    await ctx.respond(f'Pong! {bot.latency * 1000:.0f}ms')
+    embed = discord.Embed(title=f'{bot.user.name} ist online', color=discord.Color.fuchsia())
+    embed.add_field(name='Latenz', value=f'{bot.latency * 1000:.0f} ms')
+    timedelta = datetime.datetime.utcnow() - start_time
+    embed.add_field(name='Server', value=f'{len(bot.guilds)}')
+    embed.add_field(name='Benutzer', value=f'{len(bot.users)}')
+    embed.add_field(name='Uptime', value=f'{timedelta.days} Tage, {timedelta.seconds // 3600} Stunden, {(timedelta.seconds // 60) % 60} Minuten')
+    embed.set_footer(text=f'{bot.user.name} {bot.user.id}', icon_url=bot.user.display_avatar.url)
+    await ctx.respond(embed=embed, delete_after=30)
 
 
 @bot.slash_command(name='reload', description='Startet den Bot neu')
@@ -292,7 +329,7 @@ async def reload(ctx):
     embed = discord.Embed(title=f'{bot.user.name} wird neu gestartet...', color=0x00ff00)
     await ctx.respond(embed=embed, ephemeral=True)
     print('Restarting.')
-    os.execv(sys.executable, ['python'] + sys.argv)
+    os.execv(sys.executable, ['python3'] + sys.argv)
 
 
 @bot.slash_command(name='update', description='Aktualisiert und startet den Bot neu')
@@ -307,7 +344,7 @@ async def update(ctx):
         await send_msg_to_dev(f'{bot.user.name} konnte nicht aktualisiert werden. Returncode: {retval}')
         return
     await ctx.edit(embed=discord.Embed(title=f'{bot.user.name} wurde aktualisiert, starte neu...', color=0x00ff00))
-    os.execv(sys.executable, ['python'] + sys.argv)
+    os.execv(sys.executable, ['python3'] + sys.argv)
 
 
 bot.run(TOKEN)
