@@ -123,37 +123,48 @@ async def command_handler(message):
         await m.delete(delay=10)
         return
 
-    cmd = shlex.split(message.content[len(prefix):])
+    preproccessed = message.content.replace('(', ' ').replace(')', ' ')
+    cmd = shlex.split(preproccessed[len(prefix):])
 
     match cmd:
-        case ['meta' | 'metafrage']:
+        case ['help' | 'commands' | 'hilfe' | 'befehle' | 'command' | 'befehl' | 'commandlist']:
+            await help(message)
+        case ['meta' | 'metafrage' | 'meta-frage' | 'Meta' | 'Metafrage' | 'Meta-Frage' | 'META']:
             await metafrage(message)
-        case ['psu']:
+        case ['psu' | 'PSU']:  # cultists
             await psu(message)
-        case ['ssd' | 'ssds' | '1tbssd' | '1tb-ssd' | 'ssd1tb' | 'ssd-1tb']:
+        case ['ssd' | 'ssds' | '1tbssd' | '1tb-ssd' | 'ssd1tb' | 'ssd-1tb' | 'SSD' | 'SSDs' | '1TBSSD' | '1TB-SSD' | 'SSD1TB' | 'SSD-1TB']:
             await ssd_1tb(message)
-        case ['2tbssd' | '2tb-ssd' | 'ssd2tb' | 'ssd-2tb']:
+        case ['2tbssd' | '2tb-ssd' | 'ssd2tb' | 'ssd-2tb' | '2TBSSD' | '2TB-SSD' | 'SSD2TB' | 'SSD-2TB']:
             await ssd_2tb(message)
-        case ['4tbssd' | '4tb-ssd' | 'ssd4tb' | 'ssd-4tb']:
+        case ['4tbssd' | '4tb-ssd' | 'ssd4tb' | 'ssd-4tb' | '4TBSSD' | '4TB-SSD' | 'SSD4TB' | 'SSD-4TB']:
             await ssd_4tb(message)
-        case ['aio' | 'wasserkühlung' | 'wasserkühler']:
+        case ['aio' | 'wasserkühlung' | 'wasserkühler' | 'AiO' | 'AIO' | 'allinone']:
             await aio(message)
-        case ['case' | 'gehäuse']:
+        case ['case' | 'gehäuse' | 'Gehäuse']:
             await case(message)
-        case ['cpukühler' | 'cpu-kühler' | 'cpu-cooler']:
+        case ['cpukühler' | 'cpu-kühler' | 'cpu-cooler' | 'CPU-Kühler']:
             await cpukuehler(message)
-        case ['lüfter' | 'fan' | 'fans']:
+        case ['lüfter' | 'fan' | 'fans' | 'Lüfter' | 'Fan' | 'Fans']:
             await fans(message)
-        case ['netzteil' | 'nt']:
+        case ['netzteil' | 'nt' | 'Netzteil' | 'NT']:
             await netzteil(message)
-        case ['ram']:
+        case ['ram' | 'RAM']:
             await ram(message)
-        case ['rgblüfter' | 'rgb-lüfter' | 'rgb-fan' | 'rgb-fans']:
+        case ['rgblüfter' | 'rgb-lüfter' | 'rgb-fan' | 'rgb-fans' | 'RGB-Lüfter' | 'RGB-Lüfter' | 'RGB-Fan' | 'RGB-Fans']:
             await rgbluefter(message)
-        case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark']:
-            await message.reply(r'Bitte gib eine Auflösung an: `%gpu-ranking (1080p, 1440p, 2160p)`')
-        case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark', resolution]:
-            await gpu_ranking(message, resolution)
+        case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark', *resolution]:
+            if not resolution:
+                await message.reply(r'Bitte gib eine Auflösung an: `%gpu-ranking (1080p, 1440p, 2160p)`')
+            else:
+                await gpu_ranking(message, resolution)
+
+
+async def help(message):
+    embed = discord.Embed(title='Hilfe', color=discord.Color.blurple(), url='https://github.com/Jojodicus/bhw-dc-bot')
+    embed.set_thumbnail(url=bot.user.display_avatar.url)
+    embed.add_field(name='', value='Eine Übersicht über alle Features und Befehle findest du auf der GitHub-Seite des Bots (Link im Titel).')
+    await message.reply(embed=embed)
 
 
 async def metafrage(message):
@@ -284,29 +295,31 @@ def find_image_gpu(resolution: str) -> str:
 
 
 async def gpu_ranking(message, resolution: str):
-    match resolution:
-        case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k':
-            cdn = find_image_gpu('1080p-ult')
-        case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k':
-            cdn = find_image_gpu('1440p-ult')
-        case '2160p' | '2160' | 'uhd' | 'UHD' | '4k':
-            cdn = find_image_gpu('2160p-ult')
-        case _:
-            m = await message.reply(f'Unbekannte Auflösung: {resolution}')
-            await m.delete(delay=10)
-            return
-    
-    # save file if not already cached
-    filename = cdn[cdn.rfind('/')+1:]
-    filepath = '.cache/' + filename
-    if not os.path.exists(filepath):
-        with open(filepath, 'wb') as f:
-            f.write(requests.get(cdn).content)
+    for res in resolution:
+        # TODO: fuzzy match
+        match res:
+            case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k' | 'full-hd' | 'full-HD' | 'Full-HD' | 'FullHD' | 'Full-HD':
+                cdn = find_image_gpu('1080p-ult')
+            case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k' | 'quad-hd' | 'quad-HD' | 'Quad-HD' | 'QuadHD':
+                cdn = find_image_gpu('1440p-ult')
+            case '2160p' | '2160' | 'uhd' | 'UHD' | '4k' | 'ultra-hd' | 'ultra-HD' | 'Ultra-HD' | 'UltraHD':
+                cdn = find_image_gpu('2160p-ult')
+            case _:
+                m = await message.reply(f'Unbekannte Auflösung: {res}')
+                await m.delete(delay=10)
+                return
+        
+        # save file if not already cached
+        filename = cdn[cdn.rfind('/')+1:]
+        filepath = '.cache/' + filename
+        if not os.path.exists(filepath):
+            with open(filepath, 'wb') as f:
+                f.write(requests.get(cdn).content)
 
-    embed = discord.Embed(title=f'GPU-Ranking für {resolution}', url='https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html', color=discord.Color.brand_red())
-    file = discord.File(filepath, filename=filename)
-    embed.set_image(url=f'attachment://{filename}')
-    await message.reply(embed=embed, file=file)
+        embed = discord.Embed(title=f'GPU-Ranking für {res}', url='https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html', color=discord.Color.brand_red())
+        file = discord.File(filepath, filename=filename)
+        embed.set_image(url=f'attachment://{filename}')
+        await message.reply(embed=embed, file=file)
 
 # TODO: cpu ranking links thw
 
