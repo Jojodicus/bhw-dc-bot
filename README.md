@@ -55,7 +55,7 @@ Unterstützte Befehle:
 | %ram    | Bens Empfehlungen für Arbeitsspeicher |
 | %rgblüfter | Bens Empfehlungen für RGB-Lüfter |
 | %meta | Weist einen Nutzer auf eine Metafrage hin |
-| %gpu-ranking (resolution) | Sendet eine Benchmark-Grafik zum Vergleich aktueller Grafikkarten in FHD/WQHD/UHD auf Basis von [tom'sHARDWARE]. (https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html) |
+| %gpu-ranking (resolution) | Sendet eine Benchmark-Grafik zum Vergleich aktueller Grafikkarten in FHD/WQHD/UHD auf Basis von [tom'sHARDWARE](https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html). |
 | %psu | Sendet eine Übersicht von Tier-A Netzteilen auf Basis von [CULTISTS NETWORK](https://cultists.network/140/psu-tier-list/) nach Leistung sortiert |
 
 
