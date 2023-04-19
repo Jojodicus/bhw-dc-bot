@@ -355,7 +355,7 @@ async def update(ctx):
 
     try:
         out = subprocess.check_output(['git', 'pull'])
-        if out == 'Already up to date.\n':
+        if out == b'Already up to date.\n':
             await ctx.edit(embed=discord.Embed(title=f'{bot.user.name} ist bereits auf dem neuesten Stand.', color=0xffff00))
             return
     except subprocess.CalledProcessError as e:
