@@ -280,7 +280,7 @@ def find_image_gpu(resolution: str) -> str:
     data = requests.get('https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html')
     soup = BeautifulSoup(data.text, 'html.parser')
     for s in soup.find_all('script', type='text/javascript'):
-        if not 'GPU benchmarks hierarchy rasterization generational performance chart' in s.text:
+        if not 'GPU benchmarks hierarchy generational performance charts' in s.text:
             continue
         for line in s.text.split('\n'):
             if not 'var data = ' in line:
@@ -293,6 +293,8 @@ def find_image_gpu(resolution: str) -> str:
                 img = row['image']
                 if img['name'] == f'gpu-benchmarks-rast-generational-performance-chart-{resolution}.png':
                     return img['src']
+    
+    raise Exception('Could not find image')
 
 
 async def gpu_ranking(message, resolution: str):
