@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 import json
 import time
 import datetime
+import subprocess
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -351,11 +352,17 @@ async def update(ctx):
     embed = discord.Embed(title=f'{bot.user.name} wird aktualisiert...', color=0xffff00)
     await ctx.respond(embed=embed, ephemeral=True)
     print('Updating.')
-    retval = os.system('git pull')
-    if retval != 0:
+
+    try:
+        out = subprocess.check_output(['git', 'pull'])
+        if out == 'Already up to date.\n':
+            await ctx.edit(embed=discord.Embed(title=f'{bot.user.name} ist bereits auf dem neuesten Stand.', color=0xffff00))
+            return
+    except subprocess.CalledProcessError as e:
         await ctx.edit(embed=discord.Embed(title=f'{bot.user.name} konnte nicht aktualisiert werden.', color=0xff0000))
-        await send_msg_to_dev(f'{bot.user.name} konnte nicht aktualisiert werden. Returncode: {retval}')
+        await send_msg_to_dev(f'{bot.user.name} konnte nicht aktualisiert werden. Returncode: {e.returncode} - {e.output}')
         return
+
     await ctx.edit(embed=discord.Embed(title=f'{bot.user.name} wurde aktualisiert, starte neu...', color=0x00ff00))
     os.execv(sys.executable, ['python3'] + sys.argv)
 
