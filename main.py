@@ -10,7 +10,7 @@ import requests
 import shlex
 from bs4 import BeautifulSoup
 import json
-import time
+import aiohttp
 import datetime
 import subprocess
 
@@ -275,12 +275,17 @@ async def rgbluefter(message):
 
 
 # TODO: add rt
-def find_image_gpu(resolution: str) -> str:
-    # TODO: use non-blocking requests
-    data = requests.get('https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html')
-    soup = BeautifulSoup(data.text, 'html.parser')
+async def find_image_gpu(resolution: str) -> str:
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html') as r:
+            if r.status != 200:
+                await send_msg_to_dev(f'Could not reach toms hardware! Status code: {r.status}')
+                raise Exception('Could not reach toms hardware!')
+            data = await r.text()
+
+    soup = BeautifulSoup(data, 'html.parser')
     for s in soup.find_all('script', type='text/javascript'):
-        if not 'GPU benchmarks hierarchy generational performance charts' in s.text:
+        if not 'galleryData' in s.text:
             continue
         for line in s.text.split('\n'):
             if not 'var data = ' in line:
@@ -294,6 +299,7 @@ def find_image_gpu(resolution: str) -> str:
                 if img['name'] == f'gpu-benchmarks-rast-generational-performance-chart-{resolution}.png':
                     return img['src']
     
+    await send_msg_to_dev(f'Could not find image for resolution {resolution}!')
     raise Exception('Could not find image')
 
 
@@ -302,11 +308,11 @@ async def gpu_ranking(message, resolution: str):
         # TODO: fuzzy match
         match res:
             case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k' | 'full-hd' | 'full-HD' | 'Full-HD' | 'FullHD' | 'Full-HD' | '1920x1080' | '1920x1080p':
-                cdn = find_image_gpu('1080p-ult')
+                cdn = await find_image_gpu('1080p-ult')
             case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k' | 'quad-hd' | 'quad-HD' | 'Quad-HD' | 'QuadHD' | '2560x1440' | '2560x1440p':
-                cdn = find_image_gpu('1440p-ult')
+                cdn = await find_image_gpu('1440p-ult')
             case '2160p' | '2160' | 'uhd' | 'UHD' | '4k' | 'ultra-hd' | 'ultra-HD' | 'Ultra-HD' | 'UltraHD' | '3840x2160' | '3840x2160p':
-                cdn = find_image_gpu('2160p-ult')
+                cdn = await find_image_gpu('2160p-ult')
             case _:
                 m = await message.reply(f'Unbekannte Auflösung: {res}')
                 await m.delete(delay=10)
