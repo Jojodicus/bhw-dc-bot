@@ -155,7 +155,7 @@ async def command_handler(message):
             await rgbluefter(message)
         case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark', *resolution]:
             if not resolution:
-                await message.reply(r'Bitte gib eine Auflösung an: `%gpu-ranking (1080p, 1440p, 2160p)`')
+                await message.reply(f'Bitte gib eine Auflösung an. Beispiel: `{prefix}gpu-ranking 1080p`')
             else:
                 await gpu_ranking(message, resolution)
 
@@ -298,11 +298,11 @@ async def gpu_ranking(message, resolution: str):
     for res in resolution:
         # TODO: fuzzy match
         match res:
-            case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k' | 'full-hd' | 'full-HD' | 'Full-HD' | 'FullHD' | 'Full-HD':
+            case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k' | 'full-hd' | 'full-HD' | 'Full-HD' | 'FullHD' | 'Full-HD' | '1920x1080' | '1920x1080p':
                 cdn = find_image_gpu('1080p-ult')
-            case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k' | 'quad-hd' | 'quad-HD' | 'Quad-HD' | 'QuadHD':
+            case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k' | 'quad-hd' | 'quad-HD' | 'Quad-HD' | 'QuadHD' | '2560x1440' | '2560x1440p':
                 cdn = find_image_gpu('1440p-ult')
-            case '2160p' | '2160' | 'uhd' | 'UHD' | '4k' | 'ultra-hd' | 'ultra-HD' | 'Ultra-HD' | 'UltraHD':
+            case '2160p' | '2160' | 'uhd' | 'UHD' | '4k' | 'ultra-hd' | 'ultra-HD' | 'Ultra-HD' | 'UltraHD' | '3840x2160' | '3840x2160p':
                 cdn = find_image_gpu('2160p-ult')
             case _:
                 m = await message.reply(f'Unbekannte Auflösung: {res}')

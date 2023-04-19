@@ -43,6 +43,7 @@ Unterstützte Befehle:
 
 | Command | Beschreibung |
 |---------|--------------|
+| %help   | Zeig eine Hilfe an, verlinkt hierher |
 | %1tbssd | Bens Empfehlungen für 1TB-SSDs |
 | %2tbssd | Bens Empfehlungen für 2TB-SSDs |
 | %4tbssd | Bens Empfehlungen für 4TB-SSDs |
