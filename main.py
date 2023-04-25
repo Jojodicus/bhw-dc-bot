@@ -109,7 +109,7 @@ def has_role_or_higher(user, rolename, guild):
             return True
 
     highest = user.roles[-1].name
-    return rns.index(highest) > rns.index(rolename)
+    return rns.index(highest) >= rns.index(rolename)
 
 
 def is_atleast(rolename):
