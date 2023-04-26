@@ -66,14 +66,18 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
     # local/private lists
     locals = re.findall(r'https?://geizhals..?.?/wishlists/local-[0-9]+', message.content)
     if locals:
-        await message.reply(f'Diese Wunschliste (<{locals[0]}>) ist lokal und nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+        embed = discord.Embed(title='Lokale Geizhals-Listen', color=discord.Color.blurple())
+        embed.add_field(name='', value=f'Diese Wunschliste (<{locals[0]}>) ist eine lokale Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** und in deinem **Account** hinterlegt sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>')
+        await message.reply(embed=embed)
         return
     private = re.findall(r'https?://geizhals..?.?/wishlists/[0-9]+', message.content)
     for link in private:
         page = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', link)
         page = requests.get(page, headers={'cookie': API_COOKIE})
         if r'{"response":null}' in page.text:
-            await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
+            embed = discord.Embed(title='Private Geizhals-Listen', color=discord.Color.blurple())
+            embed.add_field(name='', value=f'Diese Wunschliste (<{link}>) ist eine private Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>')
+            await message.reply(embed=embed)
             return
         if r'{"code":403,"error":"Authentication failed"}' in page.text:
             await send_msg_to_dev(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
