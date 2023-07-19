@@ -375,15 +375,13 @@ async def gidf(message, searchterm):
 
     results = [f'[{r["title"]}]({r["link"]}) ({r["source"]})' for r in results]
 
-    embed = discord.Embed(title=f'GIDF: "{searchterm}"', url=url, color=discord.Color.blurple())
+    embed = discord.Embed(title=f'GIDF: "{searchterm}"', url=url.replace(' ', '+'), color=discord.Color.blurple())
     embed.set_thumbnail(url='https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
     embed.add_field(name='', value=f'Google ist dein Freund. Eine Suchmaschine zu benutzen ist kein Verbrechen. Hier eine Schnellübersicht der ersten paar Ergebnisse, die ganze Suche findest du im Link im Titel.')
 
     txt = ''
     for i, e in enumerate(results):
         txt += f'**{i+1}**. {e}\n'
-
-    print(txt)
 
     embed.add_field(name='Suchergebnisse', value=txt)
     await message.reply(embed=embed)
