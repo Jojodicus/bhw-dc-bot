@@ -13,6 +13,8 @@ import json
 import aiohttp
 import datetime
 import subprocess
+from Levenshtein import distance
+from serpapi import GoogleSearch
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -63,13 +65,15 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
 
     # TODO: more efficient link searching
 
-    # local/private lists
+    # local lists
     locals = re.findall(r'https?://geizhals..?.?/wishlists/local-[0-9]+', message.content)
     if locals:
         embed = discord.Embed(title='Lokale Geizhals-Listen', color=discord.Color.blurple())
         embed.add_field(name='', value=f'Diese Wunschliste (<{locals[0]}>) ist eine lokale Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** und in deinem **Account** hinterlegt sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>')
         await message.reply(embed=embed)
         return
+
+    # private lists
     private = re.findall(r'https?://geizhals..?.?/wishlists/[0-9]+', message.content)
     for link in private:
         page = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', link)
@@ -82,6 +86,14 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
         if r'{"code":403,"error":"Authentication failed"}' in page.text:
             await send_msg_to_dev(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
             # TODO: DM to bot sets new api cookie
+
+    # only overview to lists
+    overview = re.findall(r'https?://geizhals..?.?/wishlists(?!/[0-9]+)', message.content)
+    if overview:
+        embed = discord.Embed(title='Geizhals-Listen', color=discord.Color.blurple())
+        embed.add_field(name='', value=f'Du hast hier nur die Wunschlisten-Übersicht verlinkt. Wenn du einzelne Wunschlisten teilen möchtest, musst du diese einzeln verlinken.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>')
+        await message.reply(embed=embed)
+        return
 
     # LEGACY
     # # fix broken links
@@ -98,7 +110,7 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
     #     if sum([c.isdigit() for c in link]) <= 1:
     #         await message.reply(f'Diese Wunschliste (<{link}>) ist lokal und nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
     #         return
-        
+
     #     # private list
     #     page = requests.get(link)
     #     if 'STATUS Code: 403 - Forbidden' in page.text:
@@ -121,6 +133,11 @@ def is_atleast(rolename):
         return has_role_or_higher(ctx.author, rolename, ctx.guild)
     return commands.check(predicate)
 
+def matches_roughly(command, options):
+    for option in options:
+        if distance(command, option, score_cutoff=2) <= 2:
+            return True
+    return False
 
 async def command_handler(message):
     if not has_role_or_higher(message.author, minRole, message.guild):
@@ -131,38 +148,42 @@ async def command_handler(message):
     preproccessed = message.content.replace('(', ' ').replace(')', ' ')
     cmd = shlex.split(preproccessed[len(prefix):])
 
-    match cmd:
-        case ['help' | 'commands' | 'hilfe' | 'befehle' | 'command' | 'befehl' | 'commandlist']:
-            await help(message)
-        case ['meta' | 'metafrage' | 'meta-frage' | 'Meta' | 'Metafrage' | 'Meta-Frage' | 'META']:
-            await metafrage(message)
-        case ['psu' | 'PSU']:  # cultists
-            await psu(message)
-        case ['ssd' | 'ssds' | '1tbssd' | '1tb-ssd' | 'ssd1tb' | 'ssd-1tb' | 'SSD' | 'SSDs' | '1TBSSD' | '1TB-SSD' | 'SSD1TB' | 'SSD-1TB']:
-            await ssd_1tb(message)
-        case ['2tbssd' | '2tb-ssd' | 'ssd2tb' | 'ssd-2tb' | '2TBSSD' | '2TB-SSD' | 'SSD2TB' | 'SSD-2TB']:
-            await ssd_2tb(message)
-        case ['4tbssd' | '4tb-ssd' | 'ssd4tb' | 'ssd-4tb' | '4TBSSD' | '4TB-SSD' | 'SSD4TB' | 'SSD-4TB']:
-            await ssd_4tb(message)
-        case ['aio' | 'wasserkühlung' | 'wasserkühler' | 'AiO' | 'AIO' | 'allinone']:
-            await aio(message)
-        case ['case' | 'gehäuse' | 'Gehäuse']:
-            await case(message)
-        case ['cpukühler' | 'cpu-kühler' | 'cpu-cooler' | 'CPU-Kühler']:
-            await cpukuehler(message)
-        case ['lüfter' | 'fan' | 'fans' | 'Lüfter' | 'Fan' | 'Fans']:
-            await fans(message)
-        case ['netzteil' | 'nt' | 'Netzteil' | 'NT']:
-            await netzteil(message)
-        case ['ram' | 'RAM']:
-            await ram(message)
-        case ['rgblüfter' | 'rgb-lüfter' | 'rgb-fan' | 'rgb-fans' | 'RGB-Lüfter' | 'RGB-Lüfter' | 'RGB-Fan' | 'RGB-Fans']:
-            await rgbluefter(message)
-        case ['gpu-ranking' | 'gpu-rank' | 'gpu-benchmark', *resolution]:
-            if not resolution:
-                await message.reply(f'Bitte gib eine Auflösung an. Beispiel: `{prefix}gpu-ranking 1080p`')
-            else:
-                await gpu_ranking(message, resolution)
+    identifier = cmd[0].lower()
+
+    # TODO: un-yandere this
+    if matches_roughly(identifier, ['help', 'hilfe', 'command', 'befehl', 'commandlist']):
+        await help(message)
+    elif matches_roughly(identifier, ['meta', 'metafrage']):
+        await metafrage(message)
+    elif matches_roughly(identifier, ['psu']):  # cultists
+        await psu(message)
+    elif matches_roughly(identifier, ['ssd', '1tbssd', 'ssd1tb']):
+        await ssd_1tb(message)
+    elif matches_roughly(identifier, ['2tbssd', 'ssd2tb']):
+        await ssd_2tb(message)
+    elif matches_roughly(identifier, ['4tbssd', 'ssd4tb']):
+        await ssd_4tb(message)
+    elif matches_roughly(identifier, ['aio', 'wasserkühlung', 'wasserkühler', 'allinone']):
+        await aio(message)
+    elif matches_roughly(identifier, ['case', 'gehäuse']):
+        await case(message)
+    elif matches_roughly(identifier, ['cpukühler', 'cpu-kühler', 'cpu-cooler']):
+        await cpukuehler(message)
+    elif matches_roughly(identifier, ['lüfter', 'fan']):
+        await fans(message)
+    elif matches_roughly(identifier, ['netzteil', 'nt']):
+        await netzteil(message)
+    elif matches_roughly(identifier, ['ram']):
+        await ram(message)
+    elif matches_roughly(identifier, ['rgblüfter', 'rgb-fan']):
+        await rgbluefter(message)
+    elif matches_roughly(identifier, ['gpu-ranking', 'gpu-rank', 'gpu-benchmark']):
+        if len(cmd) < 2:
+            await message.reply(f'Bitte gib eine Auflösung an. Beispiel: `{prefix}gpu-ranking 1080p`')
+        else:
+            await gpu_ranking(message, cmd[1:])
+    elif matches_roughly(identifier, ['gidf', 'lmgtfy']):
+        await gidf(message, ' '.join(cmd[1:]))
 
 
 async def help(message):
@@ -302,26 +323,25 @@ async def find_image_gpu(resolution: str) -> str:
                 img = row['image']
                 if img['name'] == f'gpu-benchmarks-rast-generational-performance-chart-{resolution}.png':
                     return img['src']
-    
+
     await send_msg_to_dev(f'Could not find image for resolution {resolution}!')
     raise Exception('Could not find image')
 
 
 async def gpu_ranking(message, resolution: str):
     for res in resolution:
-        # TODO: fuzzy match
-        match res:
-            case '1080p' | '1080' | 'fhd' | 'fullhd' | 'FHD' | '2k' | 'full-hd' | 'full-HD' | 'Full-HD' | 'FullHD' | 'Full-HD' | '1920x1080' | '1920x1080p':
-                cdn = await find_image_gpu('1080p-ult')
-            case '1440p' | '1440' | 'qhd' | 'QHD' | 'wqhd' | 'WQHD' | '2.5k' | '2,5k' | 'quad-hd' | 'quad-HD' | 'Quad-HD' | 'QuadHD' | '2560x1440' | '2560x1440p':
-                cdn = await find_image_gpu('1440p-ult')
-            case '2160p' | '2160' | 'uhd' | 'UHD' | '4k' | 'ultra-hd' | 'ultra-HD' | 'Ultra-HD' | 'UltraHD' | '3840x2160' | '3840x2160p':
-                cdn = await find_image_gpu('2160p-ult')
-            case _:
-                m = await message.reply(f'Unbekannte Auflösung: {res}')
-                await m.delete(delay=10)
-                return
-        
+        res = res.lower()
+        if matches_roughly(res, ['1080', 'fhd', 'fullhd', '2k', '1920x1080']):
+            cdn = await find_image_gpu('1080p-ult')
+        elif matches_roughly(res, ['1440', 'wqhd', '2.5k', 'quadhd', '2560x1440']):
+            cdn = await find_image_gpu('1440p-ult')
+        elif matches_roughly(res, ['2160', 'uhd', '4k', 'ultrahd', '3840x2160']):
+            cdn = await find_image_gpu('2160p-ult')
+        else:
+            m = await message.reply(f'Unbekannte Auflösung: {res}')
+            await m.delete(delay=10)
+            return
+
         # save file if not already cached
         filename = cdn[cdn.rfind('/')+1:]
         filepath = '.cache/' + filename
@@ -335,6 +355,40 @@ async def gpu_ranking(message, resolution: str):
         await message.reply(embed=embed, file=file)
 
 # TODO: cpu ranking links thw
+
+async def gidf(message, searchterm):
+    url = f'https://www.google.com/search?q={searchterm}'
+
+    params = {
+        'engine': 'google',
+        'q': searchterm,
+        'google_domain': 'google.de',
+        'hl': 'de',
+        'gl': 'de',
+        'safe': 'active',
+        'num': 3,
+        'api_key': os.getenv('SERPAPI_KEY')
+    }
+
+    search = GoogleSearch(params)
+    results = search.get_dict()['organic_results']
+    print(results)
+
+    results = [f'[{r["title"]}]({r["link"]}) ({r["source"]})' for r in results]
+
+    print(results)
+
+    embed = discord.Embed(title=f'GIDF: "{searchterm}"', url=url, color=discord.Color.blurple())
+    embed.set_thumbnail(url='https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
+    embed.add_field(name='', value=f'Google ist dein Freund. Eine Suchmaschine zu benutzen ist kein Verbrechen. Hier eine Schnellübersicht der ersten paar Ergebnisse, die ganze Suche findest du im Link im Titel.')
+
+    txt = ''
+    for i, e in enumerate(results):
+        txt += f'**{i+1}**. {e}\n'
+
+    embed.add_field(name='Suchergebnisse', value=txt)
+    await message.reply(embed=embed)
+
 
 @bot.slash_command(name='ping', description='Überprüft Vitalfunktionen des Bots')
 @commands.has_permissions(administrator=True)
