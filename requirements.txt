@@ -1,3 +1,5 @@
 py-cord
 python-dotenv
 beautifulsoup4
+requests
+google-search-results
