@@ -361,7 +361,7 @@ async def gidf(message, searchterm):
 
     params = {
         'engine': 'google',
-        'q': searchterm,
+        'q': f'"{searchterm}"',
         'google_domain': 'google.de',
         'hl': 'de',
         'gl': 'de',
@@ -372,11 +372,8 @@ async def gidf(message, searchterm):
 
     search = GoogleSearch(params)
     results = search.get_dict()['organic_results']
-    print(results)
 
     results = [f'[{r["title"]}]({r["link"]}) ({r["source"]})' for r in results]
-
-    print(results)
 
     embed = discord.Embed(title=f'GIDF: "{searchterm}"', url=url, color=discord.Color.blurple())
     embed.set_thumbnail(url='https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
@@ -385,6 +382,8 @@ async def gidf(message, searchterm):
     txt = ''
     for i, e in enumerate(results):
         txt += f'**{i+1}**. {e}\n'
+
+    print(txt)
 
     embed.add_field(name='Suchergebnisse', value=txt)
     await message.reply(embed=embed)
