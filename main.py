@@ -366,12 +366,12 @@ async def gidf(message, searchterm):
         'hl': 'de',
         'gl': 'de',
         'safe': 'active',
-        'num': 3,
+        'num': 6, # request more than 3 results cuz google is weird (or ads get counted, idk)
         'api_key': os.getenv('SERPAPI_KEY')
     }
 
     search = GoogleSearch(params)
-    results = search.get_dict()['organic_results']
+    results = search.get_dict()['organic_results'][:3] # reduce to 3 results here
 
     results = [f'[{r["title"]}]({r["link"]}) ({r["source"]})' for r in results]
 
