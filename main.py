@@ -95,28 +95,6 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
         await message.reply(embed=embed)
         return
 
-    # LEGACY
-    # # fix broken links
-    # links = re.findall(r'https?://geizhals..?.?/https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3DWL-[0-9]+', message.content)
-    # if links:
-    #     links = '\n'.join([re.sub(r'https?%3A%2F%2Fgeizhals..?.?%2F%3Fcat%3D', '?cat=', link) for link in links])
-    #     await message.reply(f'Die Nachricht enthält kaputte Geizhals-Links, hier einmal korrigiert:\n{links}')
-    #     return
-
-    # # local/private lists
-    # links = re.findall(r'https?://geizhals..?.?/\?cat=WL-?[0-9]*', message.content)
-    # for link in links:
-    #     # local list
-    #     if sum([c.isdigit() for c in link]) <= 1:
-    #         await message.reply(f'Diese Wunschliste (<{link}>) ist lokal und nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
-    #         return
-
-    #     # private list
-    #     page = requests.get(link)
-    #     if 'STATUS Code: 403 - Forbidden' in page.text:
-    #         await message.reply(f'Diese Wunschliste (<{link}>) ist nicht öffentlich in deinem Account hinterlegt.\nFür eine Anleitung zum Erstellen von Geizhals-Listen -> <#934229012069376071>')
-    #         return
-
 
 def has_role_or_higher(user, rolename, guild):
     rns = list(map(lambda x: x.name, guild.roles))
@@ -150,50 +128,41 @@ async def command_handler(message):
 
     identifier = cmd[0].lower()
 
-    # TODO: un-yandere this
-    if matches_roughly(identifier, ['help', 'hilfe', 'command', 'befehl', 'commandlist']):
-        await help(message)
-    elif matches_roughly(identifier, ['meta', 'metafrage']):
-        await metafrage(message)
-    elif matches_roughly(identifier, ['psu']):  # cultists
-        await psu(message)
-    elif matches_roughly(identifier, ['ssd', '1tbssd', 'ssd1tb']):
-        await ssd_1tb(message)
-    elif matches_roughly(identifier, ['2tbssd', 'ssd2tb']):
-        await ssd_2tb(message)
-    elif matches_roughly(identifier, ['4tbssd', 'ssd4tb']):
-        await ssd_4tb(message)
-    elif matches_roughly(identifier, ['aio', 'wasserkühlung', 'wasserkühler', 'allinone']):
-        await aio(message)
-    elif matches_roughly(identifier, ['case', 'gehäuse']):
-        await case(message)
-    elif matches_roughly(identifier, ['cpukühler', 'cpu-kühler', 'cpu-cooler']):
-        await cpukuehler(message)
-    elif matches_roughly(identifier, ['lüfter', 'fan']):
-        await fans(message)
-    elif matches_roughly(identifier, ['netzteil', 'nt']):
-        await netzteil(message)
-    elif matches_roughly(identifier, ['ram']):
-        await ram(message)
-    elif matches_roughly(identifier, ['rgblüfter', 'rgb-fan']):
-        await rgbluefter(message)
-    elif matches_roughly(identifier, ['gpu-ranking', 'gpu-rank', 'gpu-benchmark']):
-        if len(cmd) < 2:
-            await message.reply(f'Bitte gib eine Auflösung an. Beispiel: `{prefix}gpu-ranking 1080p`')
-        else:
-            await gpu_ranking(message, cmd[1:])
-    elif matches_roughly(identifier, ['gidf', 'lmgtfy']):
-        await gidf(message, ' '.join(cmd[1:]))
+    options = [
+        ['help', 'hilfe', 'command', 'befehl', 'commandlist'],
+        ['meta', 'metafrage'],
+        ['psu'],
+        ['ssd', '1tbssd', 'ssd1tb'],
+        ['2tbssd', 'ssd2tb'],
+        ['4tbssd', 'ssd4tb'],
+        ['aio', 'wasserkühlung', 'wasserkühler', 'allinone'],
+        ['case', 'gehäuse'],
+        ['cpukühler', 'cpu-kühler', 'cpu-cooler'],
+        ['lüfter', 'fan'],
+        ['netzteil', 'nt'],
+        ['ram'],
+        ['rgblüfter', 'rgb-fan'],
+        ['gpu-ranking', 'gpu-rank', 'gpu-benchmark'],
+        ['gidf', 'lmgtfy']
+    ]
+    options_func = [help, metafrage, psu, ssd_1tb, ssd_2tb, ssd_4tb, aio, case, cpukuehler, fans, netzteil, ram, rgbluefter, gpu_ranking, gidf]
+
+    best_match = closest_match_index(identifier, options)
+
+    if best_match == -1:
+        return
+
+    await options_func[best_match](message, cmd)
 
 
-async def help(message):
+async def help(message, cmd=None):
     embed = discord.Embed(title='Hilfe', color=discord.Color.blurple(), url='https://github.com/Jojodicus/bhw-dc-bot')
     embed.set_thumbnail(url=bot.user.display_avatar.url)
     embed.add_field(name='', value='Eine Übersicht über alle Features und Befehle findest du auf der GitHub-Seite des Bots (Link im Titel).')
     await message.reply(embed=embed)
 
 
-async def metafrage(message):
+async def metafrage(message, cmd=None):
     if not has_role_or_higher(message.author, minRole, message.guild):
         m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole}\' für diesen Befehl.')
         await m.delete(delay=10)
@@ -217,7 +186,7 @@ Stelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies ersp
     return
 
 
-async def psu(message):
+async def psu(message, cmd=None):
     embed = discord.Embed(title='Tier A Netzteile (nach cultists.network rev. 17.0g)', color=discord.Color.brand_red(), url='https://cultists.network/140/psu-tier-list/')
     embed.add_field(name='1000+W', value='https://geizhals.de/?cat=WL-2652571')
     embed.add_field(name='800+W', value='https://geizhals.de/?cat=WL-2652570')
@@ -229,70 +198,70 @@ async def psu(message):
     await message.reply(embed=embed)
 
 
-async def ssd_1tb(message):
+async def ssd_1tb(message, cmd=None):
     embed = discord.Embed(title='1TB-SSDs', color=0x008380, url='https://gh.de/g/q0')
     embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
     embed.add_field(name='', value='Für Bens Empfehlungen zu 1TB-SSDs klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def ssd_2tb(message):
+async def ssd_2tb(message, cmd=None):
     embed = discord.Embed(title='2TB-SSDs', color=0x008380, url='https://gh.de/g/qP')
     embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
     embed.add_field(name='', value='Für Bens Empfehlungen zu 2TB-SSDs klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def ssd_4tb(message):
+async def ssd_4tb(message, cmd=None):
     embed = discord.Embed(title='4TB-SSDs', color=0x008380, url='https://gh.de/g/qW')
     embed.set_thumbnail(url='https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$')
     embed.add_field(name='', value='Für Bens Empfehlungen zu 4TB-SSDs klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def aio(message):
+async def aio(message, cmd=None):
     embed = discord.Embed(title='AiO Wasserkühlungen', color=0x008380, url='https://gh.de/g/Xg')
     embed.set_thumbnail(url='https://www.arctic.de/media/0b/7f/f3/1632824378/liquid-freezer-ii-280-argb-g00.png')
     embed.add_field(name='', value='Für Bens Empfehlungen zu AiO Wasserkühlungen klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def case(message):
+async def case(message, cmd=None):
     embed = discord.Embed(title='Gehäuse', color=0x008380, url='https://gh.de/g/XY')
     embed.set_thumbnail(url='https://endorfy.com/wp-content/products/EY2A006_Signum-300-ARGB/Media%20(pictures)/WebP/EY2A006-endorfy-signum-300-argb-01a-webp95.d20221216-u095934.webp')
     embed.add_field(name='', value='Für Bens Empfehlungen zu Gehäusen klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def cpukuehler(message):
+async def cpukuehler(message, cmd=None):
     embed = discord.Embed(title='CPU-Luftkühler', color=0x008380, url='https://gh.de/g/Xn')
     embed.set_thumbnail(url='https://www.arctic.de/media/3c/68/58/1635319800/freezer_i35_argb_g00.png')
     embed.add_field(name='', value='Für Bens Empfehlungen zu CPU-Luftkühlern klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def fans(message):
+async def fans(message, cmd=None):
     embed = discord.Embed(title='Gehäuselüfter', color=0x008380, url='https://gh.de/g/q6')
     embed.set_thumbnail(url='https://www.arctic.de/media/7b/fd/aa/1670325590/P12_MAX_G00.png')
     embed.add_field(name='', value='Für Bens Empfehlungen zu Gehäuselüftern ohne RGB klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def netzteil(message):
+async def netzteil(message, cmd=None):
     embed = discord.Embed(title='Netzteile', color=0x008380, url='https://gh.de/g/1H')
     embed.set_thumbnail(url='https://www.corsair.com/medias/sys_master/images/images/h7b/hbc/9760776028190/base-rmx-2021-config/Gallery/RM850x_01/-base-rmx-2021-config-Gallery-RM850x-01.png_1200Wx1200H')
     embed.add_field(name='', value='Für Bens Empfehlungen zu Netzteilen klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def ram(message):
+async def ram(message, cmd=None):
     embed = discord.Embed(title='RAM', color=0x008380, url='https://gh.de/g/qC')
     embed.set_thumbnail(url='https://www.gskill.com/_upload/images/156274365910.png')
     embed.add_field(name='', value='Für Bens Empfehlungen zu RAM klicke auf den Titel.')
     await message.reply(embed=embed)
 
 
-async def rgbluefter(message):
+async def rgbluefter(message, cmd=None):
     embed = discord.Embed(title='RGB-Gehäuselüfter', color=0x008380, url='https://gh.de/g/XQ')
     embed.set_thumbnail(url='https://www.silentiumpc.com/wp-content/uploads/2021/03/spc235-spc-stella-hp-argb-120-pwm-rev11-01-png-www.png')
     embed.add_field(name='', value='Für Bens Empfehlungen zu RGB-Gehäuselüftern klicke auf den Titel.')
@@ -327,6 +296,8 @@ async def find_image_gpu(resolution: str) -> str:
     await send_msg_to_dev(f'Could not find image for resolution {resolution}!')
     raise Exception('Could not find image')
 
+# TODO: switch to fuzzywuzzy
+# TODO: maybe use a dict
 def closest_match_index(phrase, options):
     mindist = float('inf')
     minindex = -1
@@ -344,7 +315,14 @@ def closest_match_index(phrase, options):
     return minindex
 
 
-async def gpu_ranking(message, resolution: str):
+async def gpu_ranking(message, cmd):
+    if len(cmd) < 2:
+        m = await message.reply(f'Bitte gib eine Auflösung an. Beispiel: `{prefix}gpu-ranking 1080p`')
+        await m.delete(delay=10)
+        return
+
+    resolution = cmd[1:]
+
     for res in resolution:
         res = res.lower()
 
@@ -381,8 +359,13 @@ async def gpu_ranking(message, resolution: str):
 
 # TODO: cpu ranking links thw
 
-async def gidf(message, searchterm):
-    url = f'https://www.google.com/search?q={searchterm}'
+async def gidf(message, cmd):
+    if len(cmd) < 2:
+        m = await message.reply(f'Bitte gib einen Suchbegriff an. Beispiel: `{prefix}gidf wie funktioniert google`')
+        await m.delete(delay=10)
+        return
+
+    searchterm = ' '.join(cmd[1:])
 
     params = {
         'engine': 'google',
@@ -400,7 +383,8 @@ async def gidf(message, searchterm):
 
     results = [f'[{r["title"]}]({r["link"]}) ({r["source"]})' for r in results]
 
-    embed = discord.Embed(title=f'GIDF: "{searchterm}"', url=url.replace(' ', '+'), color=discord.Color.blurple())
+    searchurl = f'https://www.google.com/search?q={searchterm}'.replace(' ', '+')
+    embed = discord.Embed(title=f'GIDF: "{searchterm}"', url=searchurl, color=discord.Color.blurple())
     embed.set_thumbnail(url='https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
     embed.add_field(name='', value=f'Google ist dein Freund. Eine Suchmaschine zu benutzen ist kein Verbrechen. Hier eine Schnellübersicht der ersten paar Ergebnisse, die ganze Suche findest du im Link im Titel.')
 
