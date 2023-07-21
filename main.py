@@ -349,7 +349,7 @@ async def gpu_ranking(message, resolution: str):
         res = res.lower()
 
         fhd = ['1080', 'fhd', 'fullhd', '2k', '1920x1080']
-        wqhd = ['1440', 'wqhd', '2.5k', 'quadhd', '2560x1440']
+        wqhd = ['1440', 'qhd', 'wqhd', '2.5k', 'quadhd', '2560x1440']
         uhd = ['2160', 'uhd', '4k', 'ultrahd', '3840x2160']
         options = [fhd, wqhd, uhd]
         idx = closest_match_index(res, options)
