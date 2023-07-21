@@ -327,20 +327,45 @@ async def find_image_gpu(resolution: str) -> str:
     await send_msg_to_dev(f'Could not find image for resolution {resolution}!')
     raise Exception('Could not find image')
 
+def closest_match_index(phrase, options):
+    mindist = float('inf')
+    minindex = -1
+
+    for i, option in enumerate(options):
+        if phrase in option:
+            return i
+
+        for part in option:
+            dist = distance(phrase, part, score_cutoff=2)
+            if dist < mindist and dist <= 2:
+                mindist = dist
+                minindex = i
+
+    return minindex
+
 
 async def gpu_ranking(message, resolution: str):
     for res in resolution:
         res = res.lower()
-        if matches_roughly(res, ['1080', 'fhd', 'fullhd', '2k', '1920x1080']):
-            cdn = await find_image_gpu('1080p-ult')
-        elif matches_roughly(res, ['1440', 'wqhd', '2.5k', 'quadhd', '2560x1440']):
-            cdn = await find_image_gpu('1440p-ult')
-        elif matches_roughly(res, ['2160', 'uhd', '4k', 'ultrahd', '3840x2160']):
-            cdn = await find_image_gpu('2160p-ult')
-        else:
-            m = await message.reply(f'Unbekannte Auflösung: {res}')
-            await m.delete(delay=10)
-            return
+
+        fhd = ['1080', 'fhd', 'fullhd', '2k', '1920x1080']
+        wqhd = ['1440', 'wqhd', '2.5k', 'quadhd', '2560x1440']
+        uhd = ['2160', 'uhd', '4k', 'ultrahd', '3840x2160']
+        options = [fhd, wqhd, uhd]
+        idx = closest_match_index(res, options)
+
+        match idx:
+            case 0:
+                res = '1080p'
+            case 1:
+                res = '1440p'
+            case 2:
+                res = '2160p'
+            case _:
+                m = await message.reply(f'Unbekannte Auflösung: {res}')
+                await m.delete(delay=10)
+                return
+        cdn = await find_image_gpu(f'{res}-ult')
 
         # save file if not already cached
         filename = cdn[cdn.rfind('/')+1:]
