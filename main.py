@@ -77,7 +77,7 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
     private = re.findall(r'https?://geizhals..?.?/wishlists/[0-9]+', message.content)
     for link in private:
         page = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', link)
-        page = requests.get(page, headers={'cookie': API_COOKIE})
+        page = requests.get(page, headers={'cookie': API_COOKIE}) # TODO: aiohttp
         if r'{"response":null}' in page.text:
             embed = discord.Embed(title='Private Geizhals-Listen', color=discord.Color.blurple())
             embed.add_field(name='', value=f'Diese Wunschliste (<{link}>) ist eine private Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>')
@@ -350,7 +350,7 @@ async def gpu_ranking(message, cmd):
         filepath = '.cache/' + filename
         if not os.path.exists(filepath):
             with open(filepath, 'wb') as f:
-                f.write(requests.get(cdn).content)
+                f.write(requests.get(cdn).content) # TODO: aiohttp
 
         embed = discord.Embed(title=f'GPU-Ranking für {res}', url='https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html', color=discord.Color.brand_red())
         file = discord.File(filepath, filename=filename)
