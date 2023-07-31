@@ -142,7 +142,7 @@ async def command_handler(message):
         ['netzteil', 'nt'],
         ['ram'],
         ['rgblüfter', 'rgb-fan'],
-        ['gpu-ranking', 'gpu-rank', 'gpu-benchmark'],
+        ['gpu-ranking', 'gpu-rank', 'gpu-benchmark', 'gpu'],
         ['gidf', 'lmgtfy']
     ]
     options_func = [help, metafrage, psu, ssd_1tb, ssd_2tb, ssd_4tb, aio, case, cpukuehler, fans, netzteil, ram, rgbluefter, gpu_ranking, gidf]
