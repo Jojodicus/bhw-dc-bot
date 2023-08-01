@@ -188,11 +188,11 @@ Stelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies ersp
 
 async def psu(message, cmd=None):
     embed = discord.Embed(title='Tier A Netzteile (nach cultists.network rev. 17.0g)', color=discord.Color.brand_red(), url='https://cultists.network/140/psu-tier-list/')
-    embed.add_field(name='1000+W', value='https://geizhals.de/?cat=WL-2652571')
-    embed.add_field(name='800+W', value='https://geizhals.de/?cat=WL-2652570')
-    embed.add_field(name='700+W', value='https://geizhals.de/?cat=WL-2652569')
-    embed.add_field(name='600+W', value='https://geizhals.de/?cat=WL-2652568')
-    embed.add_field(name='500+W', value='https://geizhals.de/?cat=WL-2652566')
+    embed.add_field(name='1000+W', value='https://geizhals.de/wishlists/2652571?sort=p')
+    embed.add_field(name='800+W', value='https://geizhals.de/wishlists/2652570?sort=p')
+    embed.add_field(name='700+W', value='https://geizhals.de/wishlists/2652569?sort=p')
+    embed.add_field(name='600+W', value='https://geizhals.de/wishlists/2652568?sort=p')
+    embed.add_field(name='500+W', value='https://geizhals.de/wishlists/2652566?sort=p')
     embed.add_field(name='Disclaimer:', value='Keine Garantie für Vollständigkeit und Aktualität!')
     # embed.add_field(name='Seasonic', value='https://geizhals.de/?cat=WL-2678896')
     await message.reply(embed=embed)
