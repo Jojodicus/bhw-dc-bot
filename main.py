@@ -19,6 +19,7 @@ from serpapi import GoogleSearch
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
 API_COOKIE = os.getenv('GH_API_COOKIE')
+SERPAPI = os.getenv('SERPAPI_KEY')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -370,7 +371,7 @@ async def gidf(message, cmd):
         'gl': 'de',
         'safe': 'active',
         'num': 6, # request more than 3 results cuz google is weird (or ads get counted, idk)
-        'api_key': os.getenv('SERPAPI_KEY')
+        'api_key': SERPAPI
     }
 
     # TODO: async
