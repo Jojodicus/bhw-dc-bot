@@ -163,11 +163,6 @@ async def help(message, cmd=None):
 
 
 async def metafrage(message, cmd=None):
-    if not has_role_or_higher(message.author, minRole, message.guild):
-        m = await message.reply(f'Du benötigst mindestens die Rolle \'{minRole}\' für diesen Befehl.')
-        await m.delete(delay=10)
-        return
-
     embed = discord.Embed(title='Metafragen', color=discord.Color.blurple(), url='https://wiki.tilde.fun/de/guide/questions')
     embed.add_field(name='', value='''Metafragen sind Fragen, welche oft vor einer richtigen Frage gestellt werden.
 
@@ -378,6 +373,7 @@ async def gidf(message, cmd):
         'api_key': os.getenv('SERPAPI_KEY')
     }
 
+    # TODO: async
     search = GoogleSearch(params)
     results = search.get_dict()['organic_results'][:3] # reduce to 3 results here
 

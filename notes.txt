@@ -1,0 +1,4 @@
+maybe format stings in json?
+title and title_url maybe combine
+thumbnail variable. null->none, n.e.->bot_avatar, url->use it
+custom decorators for commands
