@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+# TODO: sort imports
 import os
 import sys
 import discord
@@ -14,12 +15,17 @@ import aiohttp
 import datetime
 import subprocess
 from Levenshtein import distance
+import json
 from serpapi import GoogleSearch
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
 API_COOKIE = os.getenv('GH_API_COOKIE')
 SERPAPI = os.getenv('SERPAPI_KEY')
+
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+cfg_commands = config["commands"]
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -28,7 +34,7 @@ prefix = '%'
 bot = discord.Bot(intents=intents)
 
 # minimum role to use commands
-minRole = 'Silber'
+minRole = cfg_commands["min_role"]
 
 async def send_msg_to_dev(msg):
     jojo = await bot.fetch_user(226054688368361474) # Jojodicus#0001, bot dev
@@ -49,7 +55,7 @@ async def on_application_command_error(ctx, error):
 
 @bot.event
 async def on_message(message):
-    if message.author == bot.user:
+    if message.author.bot:
         return
 
     # makeshift prefix commands
@@ -58,19 +64,22 @@ async def on_message(message):
         return
 
     # Ben pings
-    if '<@234720287449546753>' in message.content and not message.author.bot:
-        embed = discord.Embed(title='Ben pingen', color=discord.Color.blurple())
-        embed.add_field(name='', value='''Bitte beachte, dass es nicht erwünscht ist, Ben in Nachrichten zu erwähnen. Er erhält täglich viele Pings und Privatnachrichten und kann nicht jedem antworten. Wenn du Ben kontaktieren möchtet, solltest du das über den Twitch-Chat tun.
-Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen, oder wenn dies explizit gewünscht ist. Weitere Informationen dazu findest du im <#925137616481947678>''')
+    cfg_ben_pings = config["ben_pings"]
+    if f'<@{cfg_ben_pings["ben_id"]}>' in message.content:
+        embed = discord.Embed(title=cfg_ben_pings["title"], color=discord.Color.blurple())
+        embed.add_field(name='', value=cfg_ben_pings["message"])
         await message.reply(embed=embed)
 
     # TODO: more efficient link searching
 
+    cfg_geizhals = config["geizhals_links"]
+
     # local lists
     locals = re.findall(r'https?://geizhals..?.?/wishlists/local-[0-9]+', message.content)
     if locals:
-        embed = discord.Embed(title='Lokale Geizhals-Listen', color=discord.Color.blurple())
-        embed.add_field(name='', value=f'Diese Wunschliste (<{locals[0]}>) ist eine lokale Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** und in deinem **Account** hinterlegt sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>')
+        cfg_gh_local = cfg_geizhals["local"]
+        embed = discord.Embed(title=cfg_gh_local["title"], color=discord.Color.blurple())
+        embed.add_field(name='', value=cfg_gh_local["message"])
         await message.reply(embed=embed)
         return
 
@@ -80,8 +89,9 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
         page = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', link)
         page = requests.get(page, headers={'cookie': API_COOKIE}) # TODO: aiohttp
         if r'{"response":null}' in page.text:
-            embed = discord.Embed(title='Private Geizhals-Listen', color=discord.Color.blurple())
-            embed.add_field(name='', value=f'Diese Wunschliste (<{link}>) ist eine private Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>')
+            cfg_gh_private = cfg_geizhals["private"]
+            embed = discord.Embed(title=cfg_gh_private["title"], color=discord.Color.blurple())
+            embed.add_field(name='', value=cfg_gh_private["message"])
             await message.reply(embed=embed)
             return
         if r'{"code":403,"error":"Authentication failed"}' in page.text:
@@ -91,8 +101,9 @@ Wir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen
     # only overview to lists
     overview = re.findall(r'https?://geizhals..?.?/wishlists(?!/[0-9]+)', message.content)
     if overview:
-        embed = discord.Embed(title='Geizhals-Listen', color=discord.Color.blurple())
-        embed.add_field(name='', value=f'Du hast hier nur die Wunschlisten-Übersicht verlinkt. Wenn du einzelne Wunschlisten teilen möchtest, musst du diese einzeln verlinken.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>')
+        cfg_gh_overview = cfg_geizhals["overview"]
+        embed = discord.Embed(title=cfg_gh_overview["title"], color=discord.Color.blurple())
+        embed.add_field(name='', value=cfg_gh_overview["message"])
         await message.reply(embed=embed)
         return
 
@@ -164,33 +175,24 @@ async def help(message, cmd=None):
 
 
 async def metafrage(message, cmd=None):
-    embed = discord.Embed(title='Metafragen', color=discord.Color.blurple(), url='https://wiki.tilde.fun/de/guide/questions')
-    embed.add_field(name='', value='''Metafragen sind Fragen, welche oft vor einer richtigen Frage gestellt werden.
+    cfg_cmd_meta = cfg_commands["meta"]
 
-Klassische Beispiele für Metafragen sind:
-- Kann mir jemand bei Monitoren helfen?
-- Kennt sich hier jemand mit Tastaturen aus?
-
-Solche Fragen verhindern eine schnelle Antwort auf die eigentliche Frage. Oft denkt jemand nicht, im Fachgebiet "gut genug" zu sein, kennt aber die Antwort und könnte trotzdem nicht antworten. Auch wenn sich jemand meldet, muss er erst auf die Antwort des Fragestellers warten, bis er antworten kann.
-
-Stelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies erspart dir Zeit und erhöht die Chance auf eine Antwort.''')
+    embed = discord.Embed(title=cfg_cmd_meta["title"], color=discord.Color.blurple(), url=cfg_cmd_meta["title_url"])
+    embed.add_field(name='', value=cfg_cmd_meta["message"])
 
     if message.reference:
         await message.channel.send(embed=embed, reference=message.reference)
     else:
         await message.reply(embed=embed)
-    return
 
 
 async def psu(message, cmd=None):
-    embed = discord.Embed(title='Tier A Netzteile (nach cultists.network rev. 17.0g)', color=discord.Color.brand_red(), url='https://cultists.network/140/psu-tier-list/')
-    embed.add_field(name='1000+W', value='https://geizhals.de/wishlists/2652571?sort=p')
-    embed.add_field(name='800+W', value='https://geizhals.de/wishlists/2652570?sort=p')
-    embed.add_field(name='700+W', value='https://geizhals.de/wishlists/2652569?sort=p')
-    embed.add_field(name='600+W', value='https://geizhals.de/wishlists/2652568?sort=p')
-    embed.add_field(name='500+W', value='https://geizhals.de/wishlists/2652566?sort=p')
-    embed.add_field(name='Disclaimer:', value='Keine Garantie für Vollständigkeit und Aktualität!')
-    # embed.add_field(name='Seasonic', value='https://geizhals.de/?cat=WL-2678896')
+    cfg_cmd_psu = cfg_commands["psu"]
+
+    embed = discord.Embed(title=cfg_cmd_psu["title"], color=discord.Color.brand_red(), url=cfg_cmd_psu["title_url"])
+    for field in cfg_cmd_psu["fields"]:
+        embed.add_field(name=field["title"], value=field["message"])
+
     await message.reply(embed=embed)
 
 

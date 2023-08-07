@@ -1,4 +1,5 @@
-maybe format stings in json?
+maybe format strings in json?
 title and title_url maybe combine
 thumbnail variable. null->none, n.e.->bot_avatar, url->use it
+    -> update thumbnails
 custom decorators for commands

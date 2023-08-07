@@ -117,11 +117,11 @@
             "aliases": ["meta", "metafrage"],
             "title": "Metafragen",
             "title_url": "https://wiki.tilde.fun/de/guide/questions",
-            "thumbnail_url": null,
             "message": "Metafragen sind Fragen, welche oft vor einer richtigen Frage gestellt werden.\n\nKlassische Beispiele für Metafragen sind:\n- Kann mir jemand bei Monitoren helfen?\n- Kennt sich hier jemand mit Tastaturen aus?\n\nSolche Fragen verhindern eine schnelle Antwort auf die eigentliche Frage. Oft denkt jemand nicht, im Fachgebiet \"gut genug\" zu sein, kennt aber die Antwort und könnte trotzdem nicht antworten. Auch wenn sich jemand meldet, muss er erst auf die Antwort des Fragestellers warten, bis er antworten kann.\n\nStelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies erspart dir Zeit und erhöht die Chance auf eine Antwort."
         },
 
         "psu": {
+            "aliases": ["psu"],
             "title": "Tier A Netzteile (nach cultists.network rev. 17.0g)",
             "title_url": "https://cultists.network/140/psu-tier-list/",
             "fields": [
@@ -153,6 +153,7 @@
         },
 
         "gpu-ranking": {
+            "aliases": ["gpu-ranking", "gpu-rank", "gpu-benchmark", "gpu"],
             "resolutions": {
                 "fhd": ["1080", "1080p", "fhd", "fullhd", "2k", "1920x1080"],
                 "wqhd": ["1440", "1440p", "qhd", "wqhd", "2.5k", "quadhd", "2560x1440"],
@@ -162,6 +163,7 @@
         },
 
         "gidf": {
+            "aliases": ["gidf", "lmgtfy"],
             "thumbnail_url": "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
             "message": "Google ist dein Freund. Eine Suchmaschine zu benutzen ist kein Verbrechen. Hier eine Schnellübersicht der ersten paar Ergebnisse, die ganze Suche findest du im Link im Titel."
         }
