@@ -195,6 +195,14 @@ async def psu(message, cmd=None):
 
     await message.reply(embed=embed)
 
+# TODO: switch to returning embeds instead of reply-functions?
+def recommendations_factory(title, title_url, thumbnail_url, content):
+    async def reply(message, cmd=None):
+        embed = discord.Embed(title=title, color=0x008380, url=title_url)
+        embed.set_thumbnail(url=thumbnail_url)
+        embed.add_field(name='', value=content)
+        await message.reply(embed=embed)
+    return reply
 
 async def ssd_1tb(message, cmd=None):
     embed = discord.Embed(title='1TB-SSDs', color=0x008380, url='https://gh.de/g/q0')

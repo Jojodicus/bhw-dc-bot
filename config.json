@@ -23,6 +23,7 @@
     "commands": {
         "min_role": "Silber",
         "fuzzy_distance": 2,
+        "ephemeral_errors": false,
 
         "help": {
             "aliases": ["help", "hilfe", "command", "befehl", "commandlist"],
