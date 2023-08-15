@@ -1,4 +1,6 @@
 {
+    "ephemeral_errors": false,
+
     "ben_pings": {
         "ben_id": 234720287449546753,
         "title": "Ben pingen",
@@ -23,7 +25,6 @@
     "commands": {
         "min_role": "Silber",
         "fuzzy_distance": 2,
-        "ephemeral_errors": false,
 
         "help": {
             "aliases": ["help", "hilfe", "command", "befehl", "commandlist"],
@@ -156,9 +157,9 @@
         "gpu-ranking": {
             "aliases": ["gpu-ranking", "gpu-rank", "gpu-benchmark", "gpu"],
             "resolutions": {
-                "fhd": ["1080", "1080p", "fhd", "fullhd", "2k", "1920x1080"],
-                "wqhd": ["1440", "1440p", "qhd", "wqhd", "2.5k", "quadhd", "2560x1440"],
-                "uhd": ["2160", "2160p", "uhd", "4k", "ultrahd", "3840x2160"]
+                "1080p": ["1080", "1080p", "fhd", "fullhd", "2k", "1920x1080"],
+                "1440p": ["1440", "1440p", "qhd", "wqhd", "2.5k", "quadhd", "2560x1440"],
+                "2160p": ["2160", "2160p", "uhd", "4k", "ultrahd", "3840x2160"]
             },
             "title_url": "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html"
         },
