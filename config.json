@@ -1,0 +1,187 @@
+{
+    "ephemeral_errors": false,
+
+    "ben_pings": {
+        "ben_id": 234720287449546753,
+        "title": "Ben pingen",
+        "message": "Bitte beachte, dass es nicht erwünscht ist, Ben in Nachrichten zu erwähnen. Er erhält täglich viele Pings und Privatnachrichten und kann nicht jedem antworten. Wenn du Ben kontaktieren möchtet, solltest du das über den Twitch-Chat tun.\nWir bitten daher, Ben (wenn überhaupt) nur in dringlichen Situationen zu pingen, oder wenn dies explizit gewünscht ist. Weitere Informationen dazu findest du im <#925137616481947678>"
+    },
+
+    "geizhals_links": {
+        "local": {
+            "title": "Lokale Geizhals-Listen",
+            "message": "Diese Wunschliste ist eine lokale Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** und in deinem **Account** hinterlegt sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>"
+        },
+        "private": {
+            "title": "Lokale Geizhals-Listen",
+            "message": "Diese Wunschliste ist eine private Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>"
+        },
+        "overview": {
+            "title": "Geizhals-Listen",
+            "message": "Du hast hier nur die Wunschlisten-Übersicht verlinkt. Wenn du einzelne Wunschlisten teilen möchtest, musst du diese einzeln verlinken.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>"
+        }
+    },
+
+    "commands": {
+        "min_role": "Silber",
+        "fuzzy_distance": 2,
+
+        "help": {
+            "aliases": ["help", "hilfe", "command", "befehl", "commandlist"],
+            "title": "Hilfe",
+            "title_url": "https://github.com/Jojodicus/bhw-dc-bot",
+            "message": "Eine Übersicht über alle Features und Befehle findest du auf der GitHub-Seite des Bots (Link im Titel)."
+        },
+
+        "recommendations": {
+            "1tb_ssd": {
+                "aliases": ["ssd", "1tbssd", "ssd1tb"],
+                "title": "1TB-SSDs",
+                "title_url": "https://gh.de/g/q0",
+                "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$",
+                "message": "Für Bens Empfehlungen zu 1TB-SSDs klicke auf den Titel."
+            },
+
+            "2tb_ssd": {
+                "aliases": ["2tbssd", "ssd2tb"],
+                "title": "2TB-SSDs",
+                "title_url": "https://gh.de/g/qP",
+                "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$",
+                "message": "Für Bens Empfehlungen zu 2TB-SSDs klicke auf den Titel."
+            },
+
+            "4tb_ssd": {
+                "aliases": ["4tbssd", "ssd4tb"],
+                "title": "4TB-SSDs",
+                "title_url": "https://gh.de/g/qW",
+                "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/de/mz-v9p1t0bw/gallery/de-990pro-nvme-m2-ssd-mz-v9p1t0bw-533582557?$684_547_PNG$",
+                "message": "Für Bens Empfehlungen zu 4TB-SSDs klicke auf den Titel."
+            },
+
+            "aio": {
+                "aliases": ["aio", "wasserkühlung", "wasserkühler", "allinone"],
+                "title": "AiO Wasserkühlungen",
+                "title_url": "https://gh.de/g/Xg",
+                "thumbnail_url": "https://www.arctic.de/media/0b/7f/f3/1632824378/liquid-freezer-ii-280-argb-g00.png",
+                "message": "Für Bens Empfehlungen zu AiO Wasserkühlungen klicke auf den Titel."
+            },
+
+            "case": {
+                "aliases": ["case", "gehäuse"],
+                "title": "Gehäuse",
+                "title_url": "https://gh.de/g/XY",
+                "thumbnail_url": "https://endorfy.com/wp-content/products/EY2A006_Signum-300-ARGB/Media%20(pictures)/WebP/EY2A006-endorfy-signum-300-argb-01a-webp95.d20221216-u095934.webp",
+                "message": "Für Bens Empfehlungen zu Gehäusen klicke auf den Titel."
+            },
+
+            "cpukühler": {
+                "aliases": ["cpukühler", "cpu-kühler", "cpu-cooler"],
+                "title": "CPU-Luftkühler",
+                "title_url": "https://gh.de/g/Xn",
+                "thumbnail_url": "https://www.arctic.de/media/3c/68/58/1635319800/freezer_i35_argb_g00.png",
+                "message": "Für Bens Empfehlungen zu CPU-Luftkühlern klicke auf den Titel."
+            },
+
+            "lüfter": {
+                "aliases": ["lüfter", "fan", "fans"],
+                "title": "Gehäuselüfter",
+                "title_url": "https://gh.de/g/q6",
+                "thumbnail_url": "https://www.arctic.de/media/7b/fd/aa/1670325590/P12_MAX_G00.png",
+                "message": "Für Bens Empfehlungen zu Gehäuselüftern ohne RGB klicke auf den Titel."
+            },
+
+            "netzteil": {
+                "aliases": ["netzteil", "nt"],
+                "title": "Netzteile",
+                "title_url": "https://gh.de/g/1H",
+                "thumbnail_url": "https://www.corsair.com/medias/sys_master/images/images/h7b/hbc/9760776028190/base-rmx-2021-config/Gallery/RM850x_01/-base-rmx-2021-config-Gallery-RM850x-01.png_1200Wx1200H",
+                "message": "Für Bens Empfehlungen zu Netzteilen klicke auf den Titel."
+            },
+
+            "ram": {
+                "aliases": ["ram", "memory"],
+                "title": "RAM",
+                "title_url": "https://gh.de/g/qC",
+                "thumbnail_url": "https://www.gskill.com/_upload/images/156274365910.png",
+                "message": "Für Bens Empfehlungen zu RAM klicke auf den Titel."
+            },
+
+            "rgblüfter": {
+                "aliases": ["rgblüfter", "rgb-fan", "rgb-fans"],
+                "title": "RGB-Gehäuselüfter",
+                "title_url": "https://gh.de/g/XQ",
+                "thumbnail_url": "https://www.silentiumpc.com/wp-content/uploads/2021/03/spc235-spc-stella-hp-argb-120-pwm-rev11-01-png-www.png",
+                "message": "Für Bens Empfehlungen zu RGB-Gehäuselüftern klicke auf den Titel."
+            }
+        },
+
+        "meta": {
+            "aliases": ["meta", "metafrage"],
+            "title": "Metafragen",
+            "title_url": "https://wiki.tilde.fun/de/guide/questions",
+            "message": "Metafragen sind Fragen, welche oft vor einer richtigen Frage gestellt werden.\n\nKlassische Beispiele für Metafragen sind:\n- Kann mir jemand bei Monitoren helfen?\n- Kennt sich hier jemand mit Tastaturen aus?\n\nSolche Fragen verhindern eine schnelle Antwort auf die eigentliche Frage. Oft denkt jemand nicht, im Fachgebiet \"gut genug\" zu sein, kennt aber die Antwort und könnte trotzdem nicht antworten. Auch wenn sich jemand meldet, muss er erst auf die Antwort des Fragestellers warten, bis er antworten kann.\n\nStelle deine Frage direkt, ohne erstmal nach einem Experten zu suchen. Dies erspart dir Zeit und erhöht die Chance auf eine Antwort."
+        },
+
+        "psu": {
+            "aliases": ["psu"],
+            "title": "Tier A Netzteile (nach cultists.network rev. 17.0g)",
+            "title_url": "https://cultists.network/140/psu-tier-list/",
+            "fields": [
+                {
+                    "title": "1000+W",
+                    "message": "https://geizhals.de/wishlists/2652571?sort=p"
+                },
+                {
+                    "title": "800+W",
+                    "message": "https://geizhals.de/wishlists/2652570?sort=p"
+                },
+                {
+                    "title": "700+W",
+                    "message": "https://geizhals.de/wishlists/2652569?sort=p"
+                },
+                {
+                    "title": "600+W",
+                    "message": "https://geizhals.de/wishlists/2652568?sort=p"
+                },
+                {
+                    "title": "500+W",
+                    "message": "https://geizhals.de/wishlists/2652566?sort=p"
+                },
+                {
+                    "title": "Disclaimer:",
+                    "message": "Keine Garantie für Vollständigkeit und Aktualität!"
+                }
+            ]
+        },
+
+        "gpu-ranking": {
+            "aliases": ["gpu-ranking", "gpu-rank", "gpu-benchmark", "gpu"],
+            "resolutions": {
+                "1080p": ["1080", "1080p", "fhd", "fullhd", "2k", "1920x1080"],
+                "1440p": ["1440", "1440p", "qhd", "wqhd", "2.5k", "quadhd", "2560x1440"],
+                "2160p": ["2160", "2160p", "uhd", "4k", "ultrahd", "3840x2160"]
+            },
+            "title_url": "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html"
+        },
+
+        "gidf": {
+            "aliases": ["gidf", "lmgtfy"],
+            "thumbnail_url": "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "message": "Google ist dein Freund. Eine Suchmaschine zu benutzen ist kein Verbrechen. Hier eine Schnellübersicht der ersten paar Ergebnisse, die ganze Suche findest du im Link im Titel."
+        }
+    },
+
+    "slash_commands": {
+        "ping": {
+            "description": "Überprüft Vitalfunktionen des Bots"
+        },
+
+        "reload": {
+            "description": "Startet den Bot neu"
+        },
+
+        "update": {
+            "description": "Aktualisiert und startet den Bot neu"
+        }
+    }
+}

@@ -20,7 +20,7 @@ python3 -m venv venv # venv erstellen
 source venv/bin/activate # oder mit jeweiliger Dateiendung bei non-posix Shells
 pip install -r requirements.txt
 mkdir .cache
-nano .env # BHW_TOKEN und GH_API_COOKIE entsprechend setzen
+nano .env # Tokens entsprechend setzen
 # Datei ausführbar machen, ansonsten via `python3 main.py` starten
 chmod +x main.py
 ```
