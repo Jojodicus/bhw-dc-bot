@@ -301,7 +301,18 @@ register_command("gpu-ranking", cfg_cmd_gpu["aliases"], gpu_ranking)
 cfg_cmd_gidf = cfg_commands["gidf"]
 async def gidf(message, cmd):
     if len(cmd) < 2:
-        await error_reply(f'Bitte gib einen Suchbegriff an. Beispiel: `{prefix}gidf wie funktioniert google`')
+        # TODO: extract function
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'https://serpapi.com/account?api_key={SERPAPI}') as r:
+                if r.status != 200:
+                    send_msg_to_dev('Could not reach serpapi.com')
+                    raise Exception('Could not reach serpapi.com')
+                data = await r.text()
+        data = json.loads(data)
+
+        embed = discord.Embed(title='GIDF', color=discord.Color.dark_gold())
+        embed.add_field(name='', value=f'Der Bot hat diesen Monat noch **{data["total_searches_left"]}** von {data["searches_per_month"]} Anfragen frei.')
+        await message.reply(embed=embed)
         return
 
     searchterm = ' '.join(cmd[1:])
