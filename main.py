@@ -125,7 +125,7 @@ async def on_message(message):
     for link in private:
         page = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', link)
         page = requests.get(page, headers={'cookie': API_COOKIE}) # TODO: aiohttp
-        if r'{"response":null}' in page.text:
+        if page.status_code == 400 or 'private wishlist' in page.text:
             cfg_gh_private = cfg_geizhals["private"]
             embed = discord.Embed(title=cfg_gh_private["title"], color=discord.Color.blurple())
             embed.add_field(name='', value=cfg_gh_private["message"])
