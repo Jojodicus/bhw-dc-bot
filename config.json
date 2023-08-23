@@ -13,7 +13,7 @@
             "message": "Diese Wunschliste ist eine lokale Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** und in deinem **Account** hinterlegt sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>"
         },
         "private": {
-            "title": "Lokale Geizhals-Listen",
+            "title": "Private Geizhals-Listen",
             "message": "Diese Wunschliste ist eine private Wunschliste. Damit auch andere darauf zugreifen können muss diese **öffentlich** sein.\nEine Anleitung zum Erstellen von Geizhals-Listen findest du hier: <#934229012069376071>"
         },
         "overview": {
