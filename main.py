@@ -91,7 +91,7 @@ async def on_application_command_error(ctx, error):
 async def on_message(message):
     if message.author.bot:
         return
-    
+
     if bot.user in message.mentions:
         await mention_handler(message)
 
