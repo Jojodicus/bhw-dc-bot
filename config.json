@@ -30,7 +30,7 @@
             "aliases": ["help", "hilfe", "command", "befehl", "commandlist"],
             "title": "Hilfe",
             "title_url": "https://github.com/Jojodicus/bhw-dc-bot",
-            "message": "Eine Übersicht über alle Features und Befehle findest du auf der GitHub-Seite des Bots (Link im Titel)."
+            "message": "Eine detaillierte Übersicht über alle Features und Befehle findest du auf der GitHub-Seite des Bots (Link im Titel)."
         },
 
         "recommendations": {

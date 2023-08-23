@@ -17,6 +17,7 @@ import subprocess
 from Levenshtein import distance
 import json
 from serpapi import GoogleSearch
+import random
 
 load_dotenv()
 TOKEN = os.getenv('BHW_TOKEN')
@@ -90,6 +91,9 @@ async def on_application_command_error(ctx, error):
 async def on_message(message):
     if message.author.bot:
         return
+    
+    if bot.user in message.mentions:
+        await mention_handler(message)
 
     # makeshift prefix commands
     if message.content.startswith(prefix):
@@ -140,6 +144,13 @@ async def on_message(message):
         await message.reply(embed=embed)
         return
 
+async def mention_handler(message):
+    if not message.guild.emojis:
+        return
+
+    # react with random emote
+    emoji = random.choice(message.guild.emojis)
+    await message.add_reaction(emoji)
 
 def has_role_or_higher(user, rolename, guild):
     rns = list(map(lambda x: x.name, guild.roles))
