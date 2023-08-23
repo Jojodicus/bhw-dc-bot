@@ -126,32 +126,43 @@
             "aliases": ["psu"],
             "title": "Tier A Netzteile (nach cultists.network rev. 17.0g)",
             "title_url": "https://cultists.network/140/psu-tier-list/",
+            "thumbnail_url": "https://f32322.n3cdn1.secureserver.net/wp-content/uploads/2021/08/psutierlist.jpg",
             "fields": [
                 {
+                    "wattage": 1000,
                     "title": "1000+W",
                     "message": "https://geizhals.de/wishlists/2652571?sort=p"
                 },
                 {
+                    "wattage": 800,
                     "title": "800+W",
                     "message": "https://geizhals.de/wishlists/2652570?sort=p"
                 },
                 {
+                    "wattage": 700,
                     "title": "700+W",
                     "message": "https://geizhals.de/wishlists/2652569?sort=p"
                 },
                 {
+                    "wattage": 600,
                     "title": "600+W",
                     "message": "https://geizhals.de/wishlists/2652568?sort=p"
                 },
                 {
+                    "wattage": 500,
                     "title": "500+W",
                     "message": "https://geizhals.de/wishlists/2652566?sort=p"
                 },
                 {
                     "title": "Disclaimer:",
                     "message": "Keine Garantie für Vollständigkeit und Aktualität!"
+                },
+                {
+                    "title": "Tier B:",
+                    "message": "Des Weiteren hier noch die Listen für die Tier B Netzteile\n- [500+W](https://geizhals.de/wishlists/2890283?sort=p)\n- [600+W](https://geizhals.de/wishlists/2890284?sort=p)\n- [700+W](https://geizhals.de/wishlists/2890285?sort=p)\n- [800+W](https://geizhals.de/wishlists/2890286?sort=p)"
                 }
-            ]
+            ],
+            "fetch_count": 3
         },
 
         "gpu-ranking": {

@@ -225,10 +225,69 @@ register_command("meta", cfg_cmd_meta["aliases"], metafrage)
 
 cfg_cmd_psu = cfg_commands["psu"]
 async def psu(message, cmd=None):
-    embed = discord.Embed(title=cfg_cmd_psu["title"], color=discord.Color.brand_red(), url=cfg_cmd_psu["title_url"])
-    for field in cfg_cmd_psu["fields"]:
-        embed.add_field(name=field["title"], value=field["message"])
+    if len(cmd) < 2:
+        embed = discord.Embed(title=cfg_cmd_psu["title"], color=discord.Color.brand_red(), url=cfg_cmd_psu["title_url"])
+        embed.set_thumbnail(url=cfg_cmd_psu["thumbnail_url"])
+        for field in cfg_cmd_psu["fields"]:
+            embed.add_field(name=field["title"], value=field["message"], inline=True)
 
+        await message.reply(embed=embed)
+        return
+
+    # get cheapest
+    fetch_count = cfg_cmd_psu["fetch_count"]
+
+    try:
+        selection = int(cmd[1])
+    except ValueError:
+        await error_reply(message, f'Unbekannte Zahl: {cmd[1]}')
+        return
+
+    wishlist_url = ''
+    wishlist_title = ''
+    for field in cfg_cmd_psu["fields"][:5]:
+        if selection >= field["wattage"]:
+            wishlist_url = field["message"]
+            wishlist_title = field["title"]
+            break
+    else:
+        await error_reply(message, f'Nicht unterstützte Wattanzahl: {selection}')
+        return
+
+    # make api call
+    api_url = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', wishlist_url)
+    api_url += "&limit=9999"
+    # note: in config.json, the ?sort=p at the end of the url is important, i think? i mean we will sort manually as well
+    async with aiohttp.ClientSession(headers={"cookie": API_COOKIE}) as session:
+            async with session.get(api_url) as r:
+                data = await r.text()
+    if r'{"code":403,"error":"Authentication failed"}' in data:
+            await send_msg_to_dev(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
+
+    data_j = json.loads(data)
+
+    found_units = [] # (price, name, link, image)
+    for product in data_j["response"]["products"]:
+        if "best_price" not in product:
+            continue
+
+        product_price = product["best_price"]
+        product_name = product["product"]
+        product_link = f'https://geizhals.de{product["urls"]["overview"]}'
+        if "images" in product and len(product["images"]) > 0:
+            product_image = product["images"][0]
+        else:
+            product_image = cfg_cmd_psu["thumbnail_url"]
+        found_units.append((product_price, product_name, product_link, product_image))
+
+    # sort by price
+    found_units.sort(key=lambda x: x[0])
+
+    # respond to message
+    embed = discord.Embed(title=f'Die {min(len(found_units), fetch_count)} günstigsten Tier A Netzteile mit {wishlist_title}', url=wishlist_url, color=discord.Color.brand_red())
+    embed.set_thumbnail(url=found_units[0][3])
+    for unit in found_units[:fetch_count]:
+        embed.add_field(name=f'{unit[0]}€', value=f'[{unit[1]}]({unit[2]})', inline=False)
     await message.reply(embed=embed)
 register_command("psu", cfg_cmd_psu["aliases"], psu)
 
