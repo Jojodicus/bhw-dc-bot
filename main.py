@@ -124,14 +124,18 @@ async def on_message(message):
     private = re.findall(r'https?://geizhals..?.?/wishlists/[0-9]+', message.content)
     for link in private:
         page = re.sub(r'https?://geizhals..?.?/wishlists/', 'https://geizhals.de/api/usercontent/v0/wishlist/', link)
-        page = requests.get(page, headers={'cookie': API_COOKIE}) # TODO: aiohttp
-        if page.status_code == 400 or 'private wishlist' in page.text:
+        # page = requests.get(page, headers={'cookie': API_COOKIE}) # TODO: aiohttp
+        async with aiohttp.ClientSession(headers={"cookie": API_COOKIE}) as session:
+            async with session.get(page) as r:
+                status = r.status
+                data = await r.text()
+        if status == 400 or 'private wishlist' in data:
             cfg_gh_private = cfg_geizhals["private"]
             embed = discord.Embed(title=cfg_gh_private["title"], color=discord.Color.blurple())
             embed.add_field(name='', value=cfg_gh_private["message"])
             await message.reply(embed=embed)
             return
-        if r'{"code":403,"error":"Authentication failed"}' in page.text:
+        if r'{"code":403,"error":"Authentication failed"}' in data:
             await send_msg_to_dev(f'API Cookie für Geizhals ist abgelaufen, bitte erneuern: {API_COOKIE}')
             # TODO: DM to bot sets new api cookie
 
