@@ -179,7 +179,7 @@ def matches_roughly(command, options):
 
 async def command_handler(message):
     if not has_role_or_higher(message.author, minRole, message.guild):
-        await error_reply(f'Du musst mindestens {minRole} sein, um Befehle zu nutzen')
+        await error_reply(message, f'Du musst mindestens {minRole} sein, um Befehle zu nutzen')
         return
 
     preproccessed = message.content.replace('(', ' ').replace(')', ' ')
@@ -339,7 +339,7 @@ async def find_image_gpu(resolution: str) -> str:
 cfg_cmd_gpu = cfg_commands["gpu-ranking"]
 async def gpu_ranking(message, cmd):
     if len(cmd) < 2:
-        await error_reply(f'Bitte gib eine Auflösung an. Beispiel: `{prefix}gpu-ranking 1080p`')
+        await error_reply(message, f'Bitte gib eine Auflösung an. Beispiel: `{prefix}gpu-ranking 1080p`')
         return
 
     resolution = cmd[1:]
@@ -350,7 +350,7 @@ async def gpu_ranking(message, cmd):
         key = closest_match_key(res, cfg_cmd_gpu["resolutions"])
 
         if not key:
-            await error_reply(f'Unbekannte Auflösung: {res}')
+            await error_reply(message, f'Unbekannte Auflösung: {res}')
             return
 
         cdn = await find_image_gpu(f'{key}-ult')
