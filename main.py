@@ -419,7 +419,7 @@ async def gidf(message, cmd):
 
     embed.add_field(name='Suchergebnisse', value=txt)
     await message.reply(embed=embed)
-register_command("gidf", cfg_cmd_gidf["aliases"], gidf)
+#register_command("gidf", cfg_cmd_gidf["aliases"], gidf)
 
 
 cfg_slashcommands = config["slash_commands"]
