@@ -321,10 +321,11 @@ async def find_image_gpu(resolution: str) -> str:
         if not 'galleryData' in s.text:
             continue
         for line in s.text.split('\n'):
-            if not 'var data = ' in line:
+            if not 'JSON.stringify(' in line:
                 continue
-            line = line.replace('var data = ', '')
-            line = line.replace(';', '')
+            line = line.split('JSON.stringify(')[1]
+            last_comma = line.rfind(',')
+            line = line[:last_comma-1]
 
             data = json.loads(line)
             for row in data['galleryData']:
