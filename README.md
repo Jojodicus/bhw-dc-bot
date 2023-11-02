@@ -29,7 +29,7 @@ Die `.env` Datei sollte in etwa so aussehen:
 
 ```bash
 BHW_TOKEN='xxx'
-GH_API_COOKIE='csrf=xxx; plack_session=xxx'
+GH_API_COOKIE='csrf=xxx'
 SERPAPI_KEY='xxx'
 ```
 
