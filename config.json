@@ -100,7 +100,7 @@
 
             "ddr4": {
                 "aliases": ["ddr4"],
-                "title": "RAM",
+                "title": "DDR4 RAM",
                 "title_url": "https://gh.de/g/wK5",
                 "thumbnail_url": "https://www.gskill.com/_upload/images/156274365910.png",
                 "message": "Für Bens Empfehlungen zu DDR4 RAM klicke auf den Titel.\nBei dem Link handelt es sich um Werbung. Ben erhält mit jedem Klick oder Kauf über diesen Link eine kleine Provision, für euch gibt es keinerlei negative Auswirkungen oder Mehrkosten. Danke für euren Support!"
@@ -108,7 +108,7 @@
 
             "ddr5": {
                 "aliases": ["ddr5", "ram", "memory"],
-                "title": "RAM",
+                "title": "DDR5 RAM",
                 "title_url": "https://gh.de/g/dnn",
                 "thumbnail_url": "https://www.gskill.com/_upload/images/166901980713.png",
                 "message": "Für Bens Empfehlungen zu DDR5 RAM klicke auf den Titel.\nBei dem Link handelt es sich um Werbung. Ben erhält mit jedem Klick oder Kauf über diesen Link eine kleine Provision, für euch gibt es keinerlei negative Auswirkungen oder Mehrkosten. Danke für euren Support!"
