@@ -212,7 +212,7 @@ def recommendations_factory(key):
 
 # register recommendation commands
 # TODO: clean this up a little
-recommendation_commands = ["1tb_ssd", "2tb_ssd", "4tb_ssd", "aio", "case", "cpukühler", "lüfter", "netzteil", "ram", "rgblüfter"]
+recommendation_commands = ["1tb_ssd", "2tb_ssd", "4tb_ssd", "aio", "case", "cpukühler", "lüfter", "netzteil", "ddr4", "ddr5", "rgblüfter"]
 for command in recommendation_commands:
     register_command(command, cfg_commands["recommendations"][command]["aliases"], None)
 
