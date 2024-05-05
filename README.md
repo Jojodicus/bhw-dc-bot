@@ -69,6 +69,7 @@ Unterstützte Befehle:
 | %rgblüfter | Bens Empfehlungen für RGB-Lüfter |
 | %meta | Weist einen Nutzer auf eine Metafrage hin |
 | %gpu-ranking (resolution) | Sendet eine Benchmark-Grafik zum Vergleich aktueller Grafikkarten in FHD/WQHD/UHD auf Basis von [tom'sHARDWARE](https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html). |
+| %cpu-ranking \[typ\] | Sendet eine Benchmark-Grafik zum Vergleich aktueller Prozessoren auf Basis von [tom'sHARDWARE](https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html). |
 | %psu (wattage) | Sendet eine Übersicht von Netzteilen auf Basis von [CULTISTS NETWORK](https://cultists.network/140/psu-tier-list/) nach Leistung/Preis sortiert |
 <!--(broken) | %gidf (query) | Google ist dein Freund, sucht einen Begriff auf Google und zeigt ein paar der ersten passenden Ergebnisse an | -->
 
