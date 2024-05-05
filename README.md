@@ -64,12 +64,13 @@ Unterstützte Befehle:
 | %cpukühler | Bens Empfehlungen für Luftkühler |
 | %lüfter | Bens Empfehlungen für non-RGB-Lüfter |
 | %netzteil | Bens Empfehlungen für Netzteile |
-| %ram    | Bens Empfehlungen für Arbeitsspeicher |
+| %dd4    | Bens Empfehlungen für DDR4 Arbeitsspeicher |
+| %dd5    | Bens Empfehlungen für DDR5 Arbeitsspeicher |
 | %rgblüfter | Bens Empfehlungen für RGB-Lüfter |
 | %meta | Weist einen Nutzer auf eine Metafrage hin |
 | %gpu-ranking (resolution) | Sendet eine Benchmark-Grafik zum Vergleich aktueller Grafikkarten in FHD/WQHD/UHD auf Basis von [tom'sHARDWARE](https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html). |
 | %psu (wattage) | Sendet eine Übersicht von Netzteilen auf Basis von [CULTISTS NETWORK](https://cultists.network/140/psu-tier-list/) nach Leistung/Preis sortiert |
-| %gidf (query) | Google ist dein Freund, sucht einen Begriff auf Google und zeigt ein paar der ersten passenden Ergebnisse an |
+<!--(broken) | %gidf (query) | Google ist dein Freund, sucht einen Begriff auf Google und zeigt ein paar der ersten passenden Ergebnisse an | -->
 
 
 ## /-Commands

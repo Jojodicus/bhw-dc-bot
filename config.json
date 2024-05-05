@@ -24,7 +24,7 @@
 
     "commands": {
         "min_role": "Silber",
-        "fuzzy_distance": 1,
+        "fuzzy_distance": 2,
 
         "help": {
             "aliases": ["help", "hilfe", "command", "befehl", "commandlist"],
@@ -181,6 +181,16 @@
                 "2160p": ["2160", "2160p", "uhd", "4k", "ultrahd", "3840x2160"]
             },
             "title_url": "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html"
+        },
+
+        "cpu-ranking": {
+            "aliases": ["cpu-ranking", "cpu-rank", "cpu-benchmark", "cpu"],
+            "types": {
+                "Gaming": ["gaming", "spiele", "games", "zocken", "daddeln", "fortnite"],
+                "Single-Core": ["sc", "single-core", "singlecore", "singel-core", "singelcore"],
+                "Multi-Core": ["mc", "multi-core", "multicore"]
+            },
+            "title_url": "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html"
         },
 
         "gidf": {

@@ -51,6 +51,7 @@ def is_recommendation_command(name):
     return name in cfg_commands["recommendations"].keys()
 
 # TODO: switch to fuzzywuzzy, move to module
+fuzzy_distance = cfg_commands["fuzzy_distance"]
 def closest_match_key(phrase, options_dict):
     # returns key of closest match
     mindist = float('inf')
@@ -61,8 +62,8 @@ def closest_match_key(phrase, options_dict):
             return key
 
         for value in values_list:
-            dist = distance(phrase, value, score_cutoff=2)
-            if dist < mindist and dist <= 2:
+            dist = distance(phrase, value, score_cutoff=fuzzy_distance)
+            if dist < mindist and dist <= fuzzy_distance:
                 mindist = dist
                 minkey = key
 
@@ -78,7 +79,7 @@ async def error_reply(message, reply_text):
 @bot.event
 async def on_ready():
     global start_time
-    start_time = datetime.datetime.utcnow()
+    start_time = datetime.datetime.now(datetime.UTC)
     print(f'{bot.user} is up and running on {len(bot.guilds)} servers!')
 
 
@@ -86,6 +87,9 @@ async def on_ready():
 async def on_application_command_error(ctx, error):
     await send_msg_to_dev(f'Error in command {ctx.command.name}:\n{ctx}\n{error}')
 
+@bot.event
+async def on_message_edit(before, after):
+    await on_message(after)
 
 @bot.event
 async def on_message(message):
@@ -352,7 +356,7 @@ async def gpu_ranking(message, cmd):
 
         if not key:
             await error_reply(message, f'Unbekannte Auflösung: {res}')
-            return
+            continue
 
         cdn = await find_image_gpu(f'{key}-ult')
 
@@ -369,9 +373,73 @@ async def gpu_ranking(message, cmd):
         await message.reply(embed=embed, file=file)
 register_command("gpu-ranking", cfg_cmd_gpu["aliases"], gpu_ranking)
 
+async def find_image_cpu(type: str) -> str:
+    identifier_dict = { # TODO: this could probably use integration into the config file
+        "Gaming": "image014",
+        "Single-Core": "image015",
+        "Multi-Core": "image016"
+        # maybe add 99th percentile?
+    }
+    type = identifier_dict[type]
 
-# TODO: cpu ranking links thw
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html') as r:
+            if r.status != 200:
+                await send_msg_to_dev(f'Could not reach toms hardware! Status code: {r.status}')
+                raise Exception('Could not reach toms hardware!')
+            data = await r.text()
 
+    soup = BeautifulSoup(data, 'html.parser')
+    for s in soup.find_all('script', type='text/javascript'):
+        if not 'galleryData' in s.text:
+            continue
+        for line in s.text.split('\n'):
+            if not 'JSON.stringify(' in line:
+                continue
+            line = line.split('JSON.stringify(')[1]
+            last_comma = line.rfind(',')
+            line = line[:last_comma-1]
+
+            data = json.loads(line)
+            for row in data['galleryData']:
+                img = row['image']
+                if img['name'] == f'{type}.png':
+                    return img['src']
+
+    await send_msg_to_dev(f'Could not find image for type {type}!')
+    raise Exception('Could not find image')
+
+cfg_cmd_cpu = cfg_commands["cpu-ranking"]
+async def cpu_ranking(message, cmd):
+    params = cmd[1:]
+
+    # default value
+    if not params:
+        params.append("Gaming")
+
+    for param in params:
+        param = param.lower()
+
+        key = closest_match_key(param, cfg_cmd_cpu["types"])
+
+        if not key:
+            await error_reply(message, f'Unbekannter Parameter: {param}')
+            continue
+
+        cdn = await find_image_cpu(key)
+
+        # save file if not already cached
+        filename = cdn[cdn.rfind('/')+1:]           # TODO: this part can probably be refactored with gpu-rank
+        filepath = '.cache/' + filename
+        if not os.path.exists(filepath):
+            with open(filepath, 'wb') as f:
+                f.write(requests.get(cdn).content) # TODO: aiohttp
+
+        embed = discord.Embed(title=f'CPU-Ranking für {key}', url=cfg_cmd_cpu["title_url"], color=discord.Color.brand_red())
+        file = discord.File(filepath, filename=filename)
+        embed.set_image(url=f'attachment://{filename}')
+        await message.reply(embed=embed, file=file)
+register_command("cpu-ranking", cfg_cmd_cpu["aliases"], cpu_ranking)
 
 cfg_cmd_gidf = cfg_commands["gidf"]
 async def gidf(message, cmd):
@@ -430,7 +498,7 @@ cfg_slashcommands = config["slash_commands"]
 async def ping(ctx):
     embed = discord.Embed(title=f'{bot.user.name} ist online', color=discord.Color.fuchsia())
     embed.add_field(name='Latenz', value=f'{bot.latency * 1000:.0f} ms')
-    timedelta = datetime.datetime.utcnow() - start_time
+    timedelta = datetime.datetime.now(datetime.UTC) - start_time
     embed.add_field(name='Server', value=f'{len(bot.guilds)}')
     embed.add_field(name='Benutzer', value=f'{ctx.guild.member_count}/{sum([g.member_count for g in bot.guilds])}')
     embed.add_field(name='Uptime', value=f'{timedelta.days} Tage, {timedelta.seconds // 3600} Stunden, {(timedelta.seconds // 60) % 60} Minuten')
