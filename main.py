@@ -88,10 +88,6 @@ async def on_application_command_error(ctx, error):
     await send_msg_to_dev(f'Error in command {ctx.command.name}:\n{ctx}\n{error}')
 
 @bot.event
-async def on_message_edit(before, after):
-    await on_message(after)
-
-@bot.event
 async def on_message(message):
     if message.author.bot:
         return
