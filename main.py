@@ -102,7 +102,7 @@ async def on_message(message):
 
     # Ben pings
     cfg_ben_pings = config["ben_pings"]
-    if f'<@{cfg_ben_pings["ben_id"]}>' in message.content:
+    if f'<@{cfg_ben_pings["ben_id"]}>' in message.content and not has_role_or_higher(message.author, "Platin", message.guild):
         embed = discord.Embed(title=cfg_ben_pings["title"], color=discord.Color.blurple())
         embed.add_field(name='', value=cfg_ben_pings["message"])
         await message.reply(embed=embed)
