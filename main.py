@@ -371,9 +371,9 @@ register_command("gpu-ranking", cfg_cmd_gpu["aliases"], gpu_ranking)
 
 async def find_image_cpu(type: str) -> str:
     identifier_dict = { # TODO: this could probably use integration into the config file
-        "Gaming": "image014",
+        "Gaming": "CPUGameCharts-0FPSGeomean-1920x1080",
         "Single-Core": "image015",
-        "Multi-Core": "image016"
+        "Multi-Core": "Image1"
         # maybe add 99th percentile?
     }
     type = identifier_dict[type]
