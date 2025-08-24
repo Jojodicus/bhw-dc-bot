@@ -330,7 +330,7 @@ async def find_image_gpu(resolution: str) -> str:
             data = json.loads(line)
             for row in data['galleryData']:
                 img = row['image']
-                if img['name'] == f'gpu-benchmarks-rasterization-performance-chart-{resolution}.png':
+                if img['name'] == f'gpu-benchmarks-rasterization-performance-chart-{resolution}':
                     return img['src']
 
     await send_msg_to_dev(f'Could not find image for resolution {resolution}!')
