@@ -2,6 +2,7 @@
 
 Helferlein für die Bens Hardware Discord Community
 
+<!--
 ## Features
 
 - Erkennt Pings an Bens_Hardware#0438 und weist den Nutzer auf die entsprechenden Regeln hin
@@ -71,7 +72,6 @@ Unterstützte Befehle:
 | %gpu-ranking (resolution) | Sendet eine Benchmark-Grafik zum Vergleich aktueller Grafikkarten in FHD/WQHD/UHD auf Basis von [tom'sHARDWARE](https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html). |
 | %cpu-ranking \[typ\] | Sendet eine Benchmark-Grafik zum Vergleich aktueller Prozessoren auf Basis von [tom'sHARDWARE](https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html). |
 | %psu (wattage) | Sendet eine Übersicht von Netzteilen auf Basis von [CULTISTS NETWORK](https://cultists.network/140/psu-tier-list/) nach Leistung/Preis sortiert |
-<!--(broken) | %gidf (query) | Google ist dein Freund, sucht einen Begriff auf Google und zeigt ein paar der ersten passenden Ergebnisse an | -->
 
 
 ## /-Commands
@@ -85,3 +85,4 @@ Unterstützte Befehle:
 | /ping   | Überprüft Online-Status sowie Latenz des Bots |
 | /reload | Startet den Bot neu |
 | /update | Holt sich via `git pull` den aktuellsten Quellcode und startet danach neu |
+-->
