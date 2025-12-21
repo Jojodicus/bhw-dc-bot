@@ -5,4 +5,4 @@ COPY * .
 
 RUN uv sync --compile-bytecode
 
-ENTRYPOINT [ "uv", "run", "main.py" ]
+ENTRYPOINT [ "uv", "run", "bot/main.py" ]

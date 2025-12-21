@@ -2,6 +2,27 @@
 
 Helferlein für die Bens Hardware Discord Community
 
+## Verwendung
+
+### Lokal
+
+```sh
+uv run --env-file .env bot/main.py
+```
+
+### Docker
+
+Direkt:
+```sh
+TODO
+```
+
+Compose:
+```yaml
+TODO
+```
+
+
 <!--
 ## Features
 
