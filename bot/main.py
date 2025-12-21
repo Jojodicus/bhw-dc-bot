@@ -6,6 +6,7 @@ import asyncio
 COGS = {
     'ping',
     'react',
+    'wishlists',
 }
 
 class BhwBot(commands.Bot):
@@ -20,7 +21,7 @@ class BhwBot(commands.Bot):
         print(f'{self.user} is up and running on {len(self.guilds)} servers!')
 
 
-async def main():
+async def main() -> None:
     intents = discord.Intents.default()
     intents.message_content = True
     async with BhwBot(command_prefix='%', intents=intents) as bot:
