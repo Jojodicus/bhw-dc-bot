@@ -1,6 +1,0 @@
-py-cord
-python-dotenv
-beautifulsoup4
-requests
-python-Levenshtein
-google-search-results
