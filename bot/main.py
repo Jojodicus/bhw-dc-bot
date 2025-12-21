@@ -23,9 +23,12 @@ class BhwBot(commands.Bot):
 
 
 async def main() -> None:
+    token = os.getenv('BHW_TOKEN')
+    if not token:
+        raise EnvironmentError('You need to set BHW_TOKEN')
     intents = discord.Intents.default()
     intents.message_content = True
     async with BhwBot(command_prefix='%', intents=intents) as bot:
-        await bot.start(os.getenv('BHW_TOKEN') or 'Improper token')
+        await bot.start(token)
 
 asyncio.run(main())
