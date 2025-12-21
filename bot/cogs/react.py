@@ -12,7 +12,7 @@ class React(Cog):
         if not self.bot.user:
             return
 
-        if self.bot.user.id not in map(lambda x: x.id, message.mentions):
+        if self.bot.user.id not in [x.id for x in message.mentions]:
             return
 
         if not message.guild:
