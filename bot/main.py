@@ -3,7 +3,10 @@ from discord.ext import commands
 import os
 import asyncio
 
-COGS = {'ping'}
+COGS = {
+    'ping',
+    'react',
+}
 
 class BhwBot(commands.Bot):
     def __init__(self, *args, **kwargs):
