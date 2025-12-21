@@ -2,6 +2,7 @@ from discord.ext.commands import Bot, Cog
 from discord import Message
 import random
 
+
 class React(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -23,6 +24,7 @@ class React(Cog):
         # react with random emote
         emoji = random.choice(message.guild.emojis)
         await message.add_reaction(emoji)
+
 
 async def setup(bot: Bot) -> None:
     await bot.add_cog(React(bot))
