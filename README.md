@@ -14,14 +14,28 @@ uv run --env-file .env bot/main.py
 
 Direkt:
 ```sh
-TODO
+docker run --rm -ite BHW_TOKEN=[dein token] $(docker build -q .)
 ```
 
 Compose:
 ```yaml
-TODO
+services:
+  bhw-bot:
+    container_name: bhw-bot
+    build: . # Pfad zu diesem Repo
+    restart: unless-stopped
+    environment:
+      BHW_TOKEN: dein token
 ```
 
+# TODO
+
+- [ ] help command
+- [ ] recommendations commands
+- [ ] meta command
+- [ ] gpu command
+- [ ] cpu command
+- [ ] ruff format
 
 <!--
 ## Features
