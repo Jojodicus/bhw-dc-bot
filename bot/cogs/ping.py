@@ -1,5 +1,5 @@
 from discord.ext.commands import Bot, Cog
-from discord import Message, Embed, Color
+from discord import Message
 
 from cogs.utils import has_role_or_higher, reply_embed
 
