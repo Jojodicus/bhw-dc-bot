@@ -1,5 +1,5 @@
-from discord import Member, Guild, User, Message, Color, Embed
-from discord.ext.commands import Bot
+from discord import Member, Guild, User, Color, Embed
+from discord.ext.commands import Bot, Context
 
 
 def has_role_or_higher(user: User | Member, rolename: str, guild: Guild | None) -> bool:
@@ -18,12 +18,23 @@ def has_role_or_higher(user: User | Member, rolename: str, guild: Guild | None) 
     return guild_rolenames.index(highest) >= guild_rolenames.index(rolename)
 
 
-async def reply_embed(message: Message, title: str, content: str, color: Color=Color.blurple()):
-    embed = Embed(title=title, color=color)
-    embed.add_field(name='', value=content)
-    await message.reply(embed=embed)
+ALLOWED_ROLE = "Silber"
+PERMISSION_DENIED_TITLE = "Unzureichendes Level"
+PERMISSION_DENIED_MESSAGE = "Du musst mindestens {} sein um diesen Befehl zu verwenden."
+
+
+async def has_permissions(ctx: Context, role: str = ALLOWED_ROLE):
+    if not has_role_or_higher(ctx.author, role, ctx.guild):
+        embed = Embed(
+            title=PERMISSION_DENIED_TITLE,
+            description=PERMISSION_DENIED_MESSAGE.format(role),
+            color=Color.blurple(),
+        )
+        await ctx.reply(embed=embed)
+        return False
+    return True
 
 
 async def message_dev(bot: Bot, message: str):
-    jojo = await bot.fetch_user(226054688368361474) # @jojodicus, bot dev
+    jojo = await bot.fetch_user(226054688368361474)  # @jojodicus, bot dev
     await jojo.send(message)

@@ -2,6 +2,10 @@
 
 Helferlein für die Bens Hardware Discord Community
 
+## Features
+
+TODO
+
 ## Verwendung
 
 ### Lokal
@@ -30,12 +34,14 @@ services:
 
 # TODO
 
-- [ ] help command
+- [X] help command
 - [ ] recommendations commands
-- [ ] meta command
+- [X] meta command
 - [ ] gpu command
 - [ ] cpu command
+- [ ] ftpm reset detector
 - [ ] ruff format
+- [ ] bring back config file
 
 <!--
 ## Features
