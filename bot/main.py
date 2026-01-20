@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import os
 import asyncio
+from pathlib import Path
 
 
 COGS = {
@@ -10,6 +11,7 @@ COGS = {
     # 'wishlists',
     "meta",
     "help",
+    "tpm",
 }
 
 
@@ -18,6 +20,7 @@ class BhwBot(commands.Bot):
         super().__init__(*args, **kwargs)
 
     async def setup_hook(self) -> None:
+        self.remove_command("help")
         for extension in COGS:
             await self.load_extension(f"cogs.{extension}")
 
@@ -26,6 +29,7 @@ class BhwBot(commands.Bot):
 
 
 async def main() -> None:
+    Path(".cache").mkdir(exist_ok=True)
     token = os.getenv("BHW_TOKEN")
     if not token:
         raise EnvironmentError("You need to set BHW_TOKEN")

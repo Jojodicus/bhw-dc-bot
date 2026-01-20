@@ -10,6 +10,9 @@ TODO
 
 ### Lokal
 
+- `uv` installieren
+- Für TPM-Erkennung: [`tesseract`](https://tesseract-ocr.github.io/) installieren
+
 ```sh
 uv run --env-file .env bot/main.py
 ```
@@ -39,7 +42,7 @@ services:
 - [X] meta command
 - [ ] gpu command
 - [ ] cpu command
-- [ ] ftpm reset detector
+- [X] ftpm reset detector
 - [ ] ruff format
 - [ ] bring back config file
 
