@@ -6,3 +6,4 @@ LICENSE
 **/__pycache__
 .ruff_cache
 Dockerfile
+.cache

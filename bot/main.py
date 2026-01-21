@@ -8,10 +8,11 @@ from pathlib import Path
 COGS = {
     "ping",
     "react",
-    # 'wishlists',
+    "wishlists",
     "meta",
     "help",
     "tpm",
+    "benchmark",
 }
 
 
