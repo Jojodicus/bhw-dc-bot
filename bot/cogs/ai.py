@@ -1,0 +1,94 @@
+import os
+from io import BytesIO
+
+import aiohttp
+from cogs.utils import has_permissions
+from discord import Color, Embed, Message
+from discord.ext.commands import Bot, Cog, Context, command
+from google import genai
+from google.genai import types
+from PIL import Image
+
+TITLE = "BHW AI"
+SYSTEM_PROMPT = """Du bist BHW-Bot, ein Helfer in einem Discord-Server von Bens-Hardware.
+Deine Aufgabe ist es, Leuten zu helfen und für eine positive Stimmung zu sorgen.
+Deine Antworten sind auf Deutsch, leicht verständlich formuliert.
+Fasse dich kurz in deinen Antworten, niemand möchte eine "Wall of Text" als Antwort!
+Du hast keinen Zugriff auf Tools oder MCPs (auch nicht zum Erstellen von Bildern/Videos), antworte nur mit reinem Text!
+"""
+TOO_MANY_ATTACHMENTS = "Bitte hänge höchstens ein Bild zu deiner Nachricht an."
+
+ALLOWED_ROLE = "Gold"
+
+
+class AI(Cog):
+    def __init__(self, bot: Bot):
+        self.bot = bot
+        self.client = genai.Client()
+
+    @command()
+    async def ai(self, ctx: Context, *, arg: str) -> None:
+        if not await has_permissions(ctx, ALLOWED_ROLE):
+            return
+
+        prompt = []
+
+        # image attachments
+        if attachments := ctx.message.attachments:
+            if len(attachments) > 1:
+                embed = Embed(
+                    title=TITLE, description=TOO_MANY_ATTACHMENTS, color=Color.blurple()
+                )
+                await ctx.reply(embed=embed)
+                return
+            attachment = attachments[0]
+            if "image" in (attachment.content_type or ""):
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(attachment.url) as response:
+                        buffer = BytesIO(await response.read())
+                        img = Image.open(buffer)
+                        prompt.append(img)
+
+        # user prompt
+        prompt.append(arg)
+
+        # reference other messages
+        if reference := ctx.message.reference:
+            message = reference.resolved
+            if isinstance(message, Message):
+                prompt.append(f"Referenzierte Nachricht: {message.content}")
+
+        # ask Gemini
+        response = self.client.models.generate_content(
+            model="gemini-3-flash-preview",
+            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
+            contents=prompt,
+        )
+
+        text = response.text
+        # imagefile = None
+
+        # multi-part (with images) - broken for now
+        # if response.parts:
+        #     for part in response.parts:
+        #         if part.text is not None:
+        #             text = part.text
+        #         elif part.inline_data is not None:
+        #             image = part.as_image()
+        #             if image:
+        #                 imagepath = f"./cache/ai_{ctx.message.id}"
+        #                 image.save(imagepath)
+        #                 imagefile = File(imagepath)
+
+        # reply
+        embed = Embed(title=TITLE, description=text, color=Color.blurple())
+        # if imagefile:
+        #     embed.set_image(url=imagefile.uri)
+        await ctx.reply(embed=embed)
+
+
+async def setup(bot: Bot) -> None:
+    token = os.getenv("GEMINI_API_KEY")
+    if not token:
+        print("You need to set GEMINI_API_KEY to use AI")
+    await bot.add_cog(AI(bot))

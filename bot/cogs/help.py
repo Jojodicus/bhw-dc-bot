@@ -1,5 +1,5 @@
-from discord.ext.commands import Bot, Cog, command, Context
-from discord import Embed, Color
+from discord import Color, Embed
+from discord.ext.commands import Bot, Cog, Context, command
 
 TITLE = "Hilfe"
 TITLE_URL = "https://github.com/Jojodicus/bhw-dc-bot"

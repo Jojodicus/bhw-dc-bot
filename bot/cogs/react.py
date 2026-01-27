@@ -1,6 +1,7 @@
-from discord.ext.commands import Bot, Cog
-from discord import Message
 import random
+
+from discord import Message
+from discord.ext.commands import Bot, Cog
 
 
 class React(Cog):

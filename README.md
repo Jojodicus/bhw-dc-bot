@@ -15,6 +15,7 @@ Helferlein für die Bens Hardware Discord Community
 - `%meta` - Antwortet auf die referenzierte Nachricht mit dem Text zu Metafragen
 - `%tpm` - Antwortet auf die referenzierte Nachricht mit dem Text zum fTPM-Reset
 - `%gpu <res1> (<res2>)...` - Schickt ein Bild vom aktuellen TomsHardware GPU Benchmark zu den angegebenen Auflösungen
+- `%ai <message>` - Frag die AI nach einer Antwort
 
 ## Verwendung
 
@@ -43,4 +44,13 @@ services:
     restart: unless-stopped
     environment:
       BHW_TOKEN: dein token
+```
+
+### Ruff
+
+Als Linter und Formatter wird Ruff benutzt:
+
+```sh
+uvx ruff check --select I --fix # imports
+uvx ruff format
 ```

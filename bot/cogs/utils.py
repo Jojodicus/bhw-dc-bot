@@ -1,4 +1,4 @@
-from discord import Member, Guild, User, Color, Embed
+from discord import Color, Embed, Guild, Member, User
 from discord.ext.commands import Bot, Context
 
 

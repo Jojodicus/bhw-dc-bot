@@ -1,9 +1,9 @@
-import discord
-from discord.ext import commands
-import os
 import asyncio
+import os
 from pathlib import Path
 
+import discord
+from discord.ext import commands
 
 COGS = {
     "ping",
@@ -13,6 +13,7 @@ COGS = {
     "help",
     "tpm",
     "benchmark",
+    "ai",
 }
 
 

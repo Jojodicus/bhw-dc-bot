@@ -1,8 +1,8 @@
-from discord.ext.commands import Bot, Cog, command, Context
-from discord import Message, Embed, Color
 import re
 
 from cogs.utils import has_permissions
+from discord import Color, Embed, Message
+from discord.ext.commands import Bot, Cog, Context, command
 
 TITLE = "Metafrage"
 TITLE_URL = "https://metafrage.de/"

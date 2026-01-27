@@ -1,8 +1,6 @@
-from discord.ext.commands import Bot, Cog
-from discord import Message, Embed, Color
-
 from cogs.utils import has_role_or_higher
-
+from discord import Color, Embed, Message
+from discord.ext.commands import Bot, Cog
 
 PING_IDS = {234720287449546753}
 TITLE = "Ben pingen"

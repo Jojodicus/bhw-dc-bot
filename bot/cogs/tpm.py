@@ -1,9 +1,10 @@
-from discord.ext.commands import Bot, Cog, command, Context
-from discord import Message, Embed, Color
-from cogs.utils import has_permissions
+import os
+
 import aiohttp
 import pytesseract
-import os
+from cogs.utils import has_permissions
+from discord import Color, Embed, Message
+from discord.ext.commands import Bot, Cog, Context, command
 
 TITLE = "Z Drücken um (f)TPM zurückzusetzen"
 MESSAGE = "Der PC geht von einem amerikanischem Tastaturlayout aus, dort sind im Vergleich zum Deutschen Y und Z vertauscht.\nDer Hinweis zu Bitlocker ist für gewöhnlich nicht relevant, sollten weitere Schritte nötig sein, werden diese im weiteren Verlauf angezeigt."
