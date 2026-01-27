@@ -44,6 +44,7 @@ services:
     restart: unless-stopped
     environment:
       BHW_TOKEN: dein token
+      GEMINI_API_KEY: optional (für %ai)
 ```
 
 ### Ruff
