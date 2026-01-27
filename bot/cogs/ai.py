@@ -17,6 +17,9 @@ Fasse dich kurz in deinen Antworten, niemand möchte eine "Wall of Text" als Ant
 Du hast keinen Zugriff auf Tools oder MCPs (auch nicht zum Erstellen von Bildern/Videos), antworte nur mit reinem Text!
 """
 TOO_MANY_ATTACHMENTS = "Bitte hänge höchstens ein Bild zu deiner Nachricht an."
+RATE_LIMIT = (
+    "Meine Kapazität für heute ist leider aufgebraucht, versuch es morgen nochmal."
+)
 
 ALLOWED_ROLE = "Gold"
 
@@ -48,7 +51,7 @@ class AI(Cog):
         if attachments := ctx.message.attachments + referencedAttachments:
             if len(attachments) > 1:
                 embed = Embed(
-                    title=TITLE, description=TOO_MANY_ATTACHMENTS, color=Color.blurple()
+                    title=TITLE, description=TOO_MANY_ATTACHMENTS, color=Color.red()
                 )
                 await ctx.reply(embed=embed)
                 return
@@ -64,11 +67,16 @@ class AI(Cog):
         prompt.append(arg)
 
         # ask Gemini
-        response = self.client.models.generate_content(
-            model="gemini-3-flash-preview",
-            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-            contents=prompt,
-        )
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-3-flash-preview",
+                config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
+                contents=prompt,
+            )
+        except Exception as _:
+            embed = Embed(title=TITLE, description=RATE_LIMIT, color=Color.red())
+            await ctx.reply(embed=embed)
+            return
 
         text = response.text
         # imagefile = None
