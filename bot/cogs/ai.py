@@ -33,8 +33,19 @@ class AI(Cog):
 
         prompt = []
 
+        # reference other messages
+        referencedMessage = None
+        if reference := ctx.message.reference:
+            message = reference.resolved
+            if isinstance(message, Message):
+                prompt.append(f"Referenzierte Nachricht: {message.content}")
+                referencedMessage = message
+
         # image attachments
-        if attachments := ctx.message.attachments:
+        referencedAttachments = []
+        if referencedMessage:
+            referencedAttachments = referencedMessage.attachments
+        if attachments := ctx.message.attachments + referencedAttachments:
             if len(attachments) > 1:
                 embed = Embed(
                     title=TITLE, description=TOO_MANY_ATTACHMENTS, color=Color.blurple()
@@ -51,12 +62,6 @@ class AI(Cog):
 
         # user prompt
         prompt.append(arg)
-
-        # reference other messages
-        if reference := ctx.message.reference:
-            message = reference.resolved
-            if isinstance(message, Message):
-                prompt.append(f"Referenzierte Nachricht: {message.content}")
 
         # ask Gemini
         response = self.client.models.generate_content(
