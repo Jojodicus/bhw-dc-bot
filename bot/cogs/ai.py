@@ -30,18 +30,29 @@ class AI(Cog):
         self.client = genai.Client()
 
     @command()
-    async def ai(self, ctx: Context, *, arg: str) -> None:
+    async def ai(self, ctx: Context) -> None:
         if not await has_permissions(ctx, ALLOWED_ROLE):
             return
 
+        arg = (
+            f"Von {ctx.author.display_name} an BHW-Bot: "
+            + ctx.message.content.removeprefix(r"%ai").lstrip()
+        )
         prompt = []
 
         # reference other messages
+        # TODO: build real chat
         referencedMessage = None
         if reference := ctx.message.reference:
             message = reference.resolved
             if isinstance(message, Message):
-                prompt.append(f"Referenzierte Nachricht: {message.content}")
+                name = message.author.display_name
+                content = message.content
+                if len(message.embeds) == 1 and message.author == self.bot.user:
+                    name = "BHW-Bot"
+                    content = message.embeds[0].description
+
+                prompt.append(f"Referenzierte Nachricht von {name}: {content}")
                 referencedMessage = message
 
         # image attachments
