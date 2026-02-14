@@ -18,12 +18,14 @@ Deine Antworten sind auf Deutsch, leicht verständlich formuliert.
 Fasse dich kurz in deinen Antworten, niemand möchte eine "Wall of Text" als Antwort!
 Du hast keinen Zugriff auf Tools oder MCPs (auch nicht zum Erstellen von Bildern/Videos), antworte nur mit reinem Text!
 """
+WORKING = "Generiere Antwort"
 TOO_MANY_ATTACHMENTS = "Bitte hänge höchstens ein Bild zu deiner Nachricht an."
 RATE_LIMIT = (
     "Meine Kapazität für heute ist leider aufgebraucht, versuch es morgen nochmal."
 )
+GENERIC_ERROR = "Etwas ist schief gelaufen, probier es eventuell später nochmal."
 
-MAX_TRIES = 5
+MAX_TRIES = 3
 
 ALLOWED_ROLE = "Gold"
 
@@ -81,9 +83,11 @@ class AI(Cog):
         # user prompt
         prompt.append(arg)
 
+        embed = Embed(title=TITLE, description=WORKING, color=Color.ash_embed())
+        reply = await ctx.reply(embed=embed)
+
         # ask Gemini
         tries = 0
-        error = Exception()
         while tries < MAX_TRIES:
             try:
                 response = self.client.models.generate_content(
@@ -94,14 +98,28 @@ class AI(Cog):
                     contents=prompt,
                 )
             except Exception as e:
-                error = e
                 tries += 1
-                await sleep(random.uniform(2, 5))
+                print(f"AI call (try {tries}): {e}")
 
-        if tries == MAX_TRIES:
-            print(f"AI call: {error}")
-            embed = Embed(title=TITLE, description=RATE_LIMIT, color=Color.red())
-            await ctx.reply(embed=embed)
+                if isinstance(e, types.JobError):
+                    if e.code == 429:
+                        embed = Embed(
+                            title=TITLE, description=RATE_LIMIT, color=Color.red()
+                        )
+                        await reply.edit(embed=embed)
+                        return
+
+                await sleep(random.uniform(2, 5))
+                embed = Embed(
+                    title=TITLE,
+                    description=WORKING + "." * tries,
+                    color=Color.ash_embed(),
+                )
+                await reply.edit(embed=embed)
+
+        if tries >= MAX_TRIES:
+            embed = Embed(title=TITLE, description=GENERIC_ERROR, color=Color.red())
+            await reply.edit(embed=embed)
             return
 
         text = response.text  # type: ignore
@@ -123,7 +141,7 @@ class AI(Cog):
         embed = Embed(title=TITLE, description=text, color=Color.blurple())
         # if imagefile:
         #     embed.set_image(url=imagefile.uri)
-        await ctx.reply(embed=embed)
+        await reply.edit(embed=embed)
 
 
 async def setup(bot: Bot) -> None:
