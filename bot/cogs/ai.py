@@ -8,7 +8,7 @@ from cogs.utils import has_permissions
 from discord import Color, Embed, Message
 from discord.ext.commands import Bot, Cog, Context, command
 from google import genai
-from google.genai import types
+from google.genai import errors, types
 from PIL import Image
 
 TITLE = "BHW AI"
@@ -97,19 +97,18 @@ class AI(Cog):
                     ),
                     contents=prompt,
                 )
-            except Exception as e:
+            except errors.ClientError as e:
                 tries += 1
                 print(f"AI call (try {tries}): {e}")
 
-                if isinstance(e, types.JobError):
-                    if e.code == 429:
-                        embed = Embed(
-                            title=TITLE, description=RATE_LIMIT, color=Color.red()
-                        )
-                        await reply.edit(embed=embed)
-                        return
+                if e.code == 429:
+                    embed = Embed(
+                        title=TITLE, description=RATE_LIMIT, color=Color.red()
+                    )
+                    await reply.edit(embed=embed)
+                    return
 
-                await sleep(random.uniform(2, 5))
+                await sleep(random.uniform(5, 10))
                 embed = Embed(
                     title=TITLE,
                     description=WORKING + "." * tries,
