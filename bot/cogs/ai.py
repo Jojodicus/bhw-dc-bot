@@ -1,4 +1,6 @@
 import os
+import random
+from asyncio import sleep
 from io import BytesIO
 
 import aiohttp
@@ -20,6 +22,8 @@ TOO_MANY_ATTACHMENTS = "Bitte hänge höchstens ein Bild zu deiner Nachricht an.
 RATE_LIMIT = (
     "Meine Kapazität für heute ist leider aufgebraucht, versuch es morgen nochmal."
 )
+
+MAX_TRIES = 5
 
 ALLOWED_ROLE = "Gold"
 
@@ -78,18 +82,29 @@ class AI(Cog):
         prompt.append(arg)
 
         # ask Gemini
-        try:
-            response = self.client.models.generate_content(
-                model="gemini-3-flash-preview",
-                config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-                contents=prompt,
-            )
-        except Exception as _:
+        tries = 0
+        error = Exception()
+        while tries < MAX_TRIES:
+            try:
+                response = self.client.models.generate_content(
+                    model="gemini-3-flash-preview",
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_PROMPT
+                    ),
+                    contents=prompt,
+                )
+            except Exception as e:
+                error = e
+                tries += 1
+                await sleep(random.uniform(2, 5))
+
+        if tries == MAX_TRIES:
+            print(f"AI call: {error}")
             embed = Embed(title=TITLE, description=RATE_LIMIT, color=Color.red())
             await ctx.reply(embed=embed)
             return
 
-        text = response.text
+        text = response.text  # type: ignore
         # imagefile = None
 
         # multi-part (with images) - broken for now
