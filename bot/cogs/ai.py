@@ -27,7 +27,6 @@ ALLOWED_ROLE = "Gold"
 class AI(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.client = genai.Client()
 
     @command()
     async def ai(self, ctx: Context) -> None:
@@ -79,12 +78,14 @@ class AI(Cog):
 
         # ask Gemini
         try:
-            response = self.client.models.generate_content(
+            client = genai.Client()
+            response = client.models.generate_content(
                 model="gemini-3-flash-preview",
                 config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
                 contents=prompt,
             )
-        except Exception as _:
+        except Exception as e:
+            print(f"AI call: {e}")
             embed = Embed(title=TITLE, description=RATE_LIMIT, color=Color.red())
             await ctx.reply(embed=embed)
             return
