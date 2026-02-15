@@ -89,6 +89,7 @@ class AI(Cog):
         # ask Gemini
         tries = 0
         while tries < MAX_TRIES:
+            tries += 1
             try:
                 response = self.client.models.generate_content(
                     model="gemini-3-flash-preview",
@@ -98,9 +99,7 @@ class AI(Cog):
                     contents=prompt,
                 )
             except errors.ClientError as e:
-                tries += 1
                 print(f"AI call (try {tries}): {e}")
-
                 if e.code == 429:
                     embed = Embed(
                         title=TITLE, description=RATE_LIMIT, color=Color.red()
@@ -108,13 +107,13 @@ class AI(Cog):
                     await reply.edit(embed=embed)
                     return
 
-                await sleep(random.uniform(5, 10))
-                embed = Embed(
-                    title=TITLE,
-                    description=WORKING + "." * tries,
-                    color=Color.ash_embed(),
-                )
-                await reply.edit(embed=embed)
+            await sleep(random.uniform(5, 10))
+            embed = Embed(
+                title=TITLE,
+                description=WORKING + "." * tries,
+                color=Color.ash_embed(),
+            )
+            await reply.edit(embed=embed)
 
         if tries >= MAX_TRIES:
             embed = Embed(title=TITLE, description=GENERIC_ERROR, color=Color.red())
