@@ -106,6 +106,8 @@ class AI(Cog):
                     )
                     await reply.edit(embed=embed)
                     return
+            except Exception as e:
+                print(f"AI call (try {tries}): {e}")
 
             await sleep(random.uniform(5, 10))
             embed = Embed(
