@@ -12,7 +12,7 @@ metaEmbed = Embed(
     title=TITLE, url=TITLE_URL, description=MESSAGE, color=Color.blurple()
 )
 
-PATTERN = re.compile(r"kennt sich (hier )?(wer|jemand|einer) mit [a-z A-Z]* aus *\?*")
+PATTERN = re.compile(r"kennt sich (hier )?(wer|jemand|jmd|einer) mit [a-z A-Z]* aus *\?*")
 
 
 class Meta(Cog):
